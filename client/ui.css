@@ -128,4 +128,35 @@ font-weight: normal;
  margin: 0;
 } 
 
+.quarter-max-button{
+    background-image: url(./images/add.png) !important;
+}
+
+.quarter-min-button{
+    background-image: url(./images/delete.png) !important;
+}
+
+.year-min-littlestep{
+    background-image: url(./images/control_play_blue_retation.png) !important;
+}
+
+.year-min-largestep{
+    background-image: url(./images/control_rewind_blue.png) !important;
+}
+
+.year-max-littlestep{
+    background-image: url(./images/control_play_blue.png) !important;
+}
+
+.map-button-img{ 
+    background-image: url(./images/map_go.png) !important;
+}
+
+.print-button-img{ 
+    background-image: url(./images/printer.png) !important;
+}
+
+.year-max-largestep{
+    background-image: url(./images/control_fastforward_blue.png) !important;
+}
 

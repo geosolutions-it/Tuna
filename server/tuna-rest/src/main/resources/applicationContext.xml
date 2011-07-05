@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Configurer that replaces ${...} placeholders with values from a properties file -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>classpath:db.properties</value>
+		</property>
+	</bean>
+	
+	<!-- Spring without JNDI -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+		<property name="url" value="${dataSource.url}"/>
+		<property name="maxActive" value="10" />
+	</bean>
+	
+	<!-- Spring JNDI
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:comp/env/jdbc/${jndy.datasource}"/>
+	</bean>  -->
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+  	
+  	<!-- DAOs -->
+  	<bean id="SpeciesDAO" class="it.geosolutions.dao.impl.SpeciesDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    
+    <bean id="GearsDAO" class="it.geosolutions.dao.impl.GearsDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    
+    <!-- REST -->
+    <bean id="species" class="it.geosolutions.rest.SpeciesDataRestlet">
+    	<property name="daoSpecies" ref="SpeciesDAO"/>
+  	</bean>
+  	
+  	<bean id="gears" class="it.geosolutions.rest.GearsDataRestlet">
+  		<property name="daoGears" ref="GearsDAO"/>
+  	</bean>
+  	
+    <bean id="dispatcher" class="it.geosolutions.app.TUNADispatcher">
+    	<property name="resourceMappings">
+        	<bean class="java.util.HashMap">
+            	<constructor-arg>
+                	<map>
+                  		<entry key="/tuna/species"><ref local="species" /></entry>		
+                  		<entry key="/tuna/gears"><ref local="gears" /></entry>	 	  
+  					</map>
+              	</constructor-arg>
+            </bean>
+        </property>  
+    </bean>
+    
+    <bean id="application" class="it.geosolutions.app.TUNAApplication">
+  		<property name="manager" ref="dispatcher"/>
+  	</bean>
+
+</beans>

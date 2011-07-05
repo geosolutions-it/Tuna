@@ -1,0 +1,261 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+	  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Printing Page</title>
+    
+    <script type="text/javascript" src="lib/ext-3.3.1/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="lib/ext-3.3.1/ext-all.js"></script>
+
+		<link rel="stylesheet" type="text/css" href="ui.css"/>
+		<script type="text/javascript" src="tunaConfig.js"></script>
+		
+		<script type="text/javascript">
+        
+        function speciesRequest(data, reqURL){
+            var url = reqURL;
+            Ext.Ajax.request({
+               url: url,
+               method: 'GET',
+               timeout: Tuna.http_timeout,
+               success: function(response, opts){
+                    var json = Ext.decode( response.responseText );
+
+                    var speciesMap = [];
+
+                    var size = json.length;
+                    for(var y=0; y<size; y++){
+                        var obj = new Object();
+                        obj.value = json[y].ficItem;
+                        obj.specie = json[y].name;
+                        
+                        speciesMap.push(obj);
+                    }
+                    
+                    var speciesNames = [];
+                    for(var k=0; k<data.length; k++){
+                        for(var x in speciesMap){
+                            if(speciesMap[x].value == data[k]){
+                                speciesNames.push(speciesMap[x].specie);
+                            }
+                        }
+                    }                
+                    
+                    document.getElementById('tabspecies').innerHTML = speciesNames.join(',');
+               },
+               failure:  function(response, opts){
+                    Ext.Msg.show({
+                       title: "Gears Types Loading",
+                       msg: "An error occurred while loading Gears Types: " + response.status,
+                       buttons: Ext.Msg.OK,
+                       icon: Ext.MessageBox.ERROR
+                    });
+               }
+            });
+        }    
+        
+        function gearsRequest(data, reqURL){
+            var url = reqURL;
+            Ext.Ajax.request({
+               url: url,
+               method: 'GET',
+               timeout: Tuna.http_timeout,
+               success: function(response, opts){
+                    var json = Ext.decode( response.responseText );
+
+                    var gearsMap = [];
+                    
+                    var size = json.length;
+                    for(var z=0; z<size; z++){
+                        var obj = new Object();
+                        obj.value = json[z].gearType;
+                        obj.gear = json[z].name;
+                        
+                        gearsMap.push(obj);
+                    }
+
+                    var gearsNames = [];
+                    for(var q=0; q<data.length; q++){
+                        for(var y in gearsMap){
+                            if(gearsMap[y].value == data[q])
+                                gearsNames.push(gearsMap[y].gear);
+                        }
+                    }
+                    
+                    document.getElementById('tabgears').innerHTML = gearsNames.join(',');
+               },
+               failure:  function(response, opts){
+                    Ext.Msg.show({
+                       title: "Gears Types Loading",
+                       msg: "An error occurred while loading Gears Types: " + response.status,
+                       buttons: Ext.Msg.OK,
+                       icon: Ext.MessageBox.ERROR
+                    });
+               }
+            });
+        }  
+        
+		</script>
+		
+    </head>
+    
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+				<tr>
+				<td colspan="4">
+				<img align="middle" src="http://www.fao.org/fi/figis/selector/assets/images/query.gif">
+				<span class="headtext">Atlas of Tuna and Billfish Catches: Interactive display</span>
+				</td>
+				</tr>
+				<tr>
+				<td colspan="4" class="smalltext">
+				<div style="width:660px; text-align:justify;">
+				To define your Query, select items of interest from the Selection Tabs, define your Display Options and click the Submit button to see results. Due to the amount of data, it may take some time to obtain result, please be patient.	 For background information, please <a href="http://www.fao.org/figis/servlet/static?dom=collection&xml=tunabillfishatlas.xml">read here</a>. User can also download the full set of data used to prepare the maps for <a href="ftp://ftp.fao.org//fi/document/tunatlas/llcatch.zip">Longline</a>, <a href="ftp://ftp.fao.org//fi/document/tunatlas/plcatch.zip">Pole & Line</a> and <a href="ftp://ftp.fao.org//fi/document/tunatlas/pscatch.zip">Purse Seine</a>
+				</div>
+				</td>
+				</tr>
+				</table>
+				
+				<br/>
+				
+        <table class="reftopmenu" border="0" cellpadding="2" cellspacing="2" width="100%"><tbody>
+        <tr>
+        <td align="left" nowrap="nowrap" width="5%"><b>Map Title:</b>
+        </td>
+        <td id="tabtitle" align="left" width="95%">
+        </td>
+        </tr>
+        <tr>
+        <td align="left" width="5%"><b>Species:</b>
+        </td>
+        <td id="tabspecies" align="left" width="95%">
+        </td>
+        </tr>
+        <tr>
+        <td align="left" width="5%"><b>Gears:</b>
+        </td>
+        <td id="tabgears" align="left" width="95%">
+        </td>
+        </tr>
+        <tr>
+        <td align="left" width="5%"><b>Periods:</b>
+        </td>
+        <td id="tabperiod" align="left" width="95%">						
+        </td>
+        </tr>
+        <tr>
+        <td align="left" width="5%"><b>Quarters:</b>
+        </td>
+        <td id="tabquarters" align="left" width="95%">						
+        </td>
+        </tr>
+        <tr>
+        <td colspan="2">
+        </td>
+        </tr></tbody>
+        </table>
+        
+        <table class="reftopmenu" border="0" cellpadding="2" cellspacing="2" width="100%"><tbody>
+        <tr align="left" valign="middle">
+        <td colspan="2">
+
+        <div style="width:680px;height:330px;border:1px solid black;position:relative;overflow:hidden" id="mapTunaAtlas">
+
+        <div id="WorldGrid" style="width: 680px; height: 330px; overflow: hidden; position: absolute; z-index: 1;">
+        </div>
+
+        <div id="AllAreas" style="width: 680px; height: 330px; overflow: hidden; position: absolute; z-index: 3;">
+        </div>
+
+        <div id="TunaAtlas" style="width: 680px; height: 330px; overflow: hidden; position: absolute; z-index: 2;">
+        </div>
+
+        <div id="TopContinents" style="width: 680px; height: 330px; overflow: hidden; position: absolute; z-index: 0;">
+        </div>
+        
+        </div>
+        </td>
+        </tr>
+        <tr align="left" valign="middle">
+        <td><strong>Catches(tonnes)</strong>
+
+        <div style="width:170px;height:120px;border:1px solid black;overflow:hidden;" id="legendTunaAtlas">
+        </div>
+        
+        <script type="text/javascript">					    
+            var href = location.href;
+                
+            if (href.indexOf("?") != -1) {
+                var viewParams = href.split('?')[1];
+                
+                var topContinent = Tuna.vars.wms + '?LAYERS=fifao:UN_CONTINENT&FORMAT=image/png&TRANSPARENT=FALSE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=768&HEIGHT=768';
+                var allArea = Tuna.vars.wms + '?LAYERS=fifao:FAO_MAJOR,fifao:UN_CONTINENT&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=768&HEIGHT=768';
+                var tunaMap = Tuna.vars.wms + '?LAYERS=fifao:TUNA_YEARLY_CATCHES&BBOX=-180,-90,180,90&WIDTH=768&HEIGHT=768&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&VIEWPARAMS=' + viewParams;
+                var worldGrid = Tuna.vars.wms + '?LAYERS=fifao:GRID_G5&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=768&HEIGHT=768';
+                
+                var topContinentDiv = document.getElementById('TopContinents');				
+                topContinentDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + topContinent + '">';		
+                var allAreaDiv = document.getElementById('AllAreas');				
+                allAreaDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + allArea + '">';		
+                var tunaDiv = document.getElementById('TunaAtlas');				
+                tunaDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + tunaMap + '">';		
+                var worldGridDiv = document.getElementById('WorldGrid');				
+                worldGridDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + worldGrid + '">';		
+                
+                var legendDiv = document.getElementById('legendTunaAtlas');					     
+                legendDiv.innerHTML = '<img alt="" src="' + Tuna.vars.wms + '?request=GetLegendGraphic&Format=image/png&version=1.1.1&layer=fifao:TUNA_YEARLY_CATCHES&width=20&height=20&viewparams=' + viewParams + '">';					
+            
+                var parameters = viewParams.split(';');
+                var title;
+                var species;
+                var gears;
+                var periods;
+                var quarters;
+                
+                for(var i=0; i<parameters.length; i++){
+                    if(parameters[i].indexOf('CD_GEAR') != -1){
+                        gears = parameters[i].split(':')[1].split('\\,');
+                    }else if(parameters[i].indexOf('FIC_ITEM') != -1){
+                        species = parameters[i].split(':')[1].split('\\,');
+                    }else if(parameters[i].indexOf('YR_TA') != -1){
+                        periods = parameters[i].split(':')[1].replace(/\\,/g,',');
+                    }else if(parameters[i].indexOf('QTR_TA') != -1){
+                        quarters = parameters[i].split(':')[1].replace(/\\,/g,',');
+                    }else if(parameters[i].indexOf('OP') != -1){
+                        title = (parameters[i].split(':')[1] == 'sum' ? 'Cumulative' : 'Average') + " Tuna Yearly Catches";
+                    }
+                }
+
+                document.getElementById('tabquarters').innerHTML = quarters;
+                document.getElementById('tabperiod').innerHTML = periods;
+                document.getElementById('tabtitle').innerHTML = title;
+                
+                speciesRequest(species, Tuna.speciesURL);
+                gearsRequest(gears, Tuna.gearsURL);
+            }
+            
+        </script>
+        </td>
+        </tr>
+        <tr align="left" valign="middle">
+        <td colspan="2">
+        <br>
+        <u>FIELDS DESCRIPTION</u>
+        <br>
+        <b>Ocean area</b>
+        Code of location of catches is made up of six digits {9-Quadrant 
+        99-Latitude 999-Longitude}, where Quadrant {1=NE, 2=SE, 3=SW and 4=NW}.
+        <br><b>Year.Quarter</b> breakdown of catches in tonnes by years and quarters (i.e. 2001.Q1 =  1st Quarter 2001).
+        <br><b>SUM(Year.Quarter)</b> or <b>AVG(Year.Quarter)</b> cumulative catches or average catches for selected years and quarters.
+        <br>
+        <br>
+        <a onclick="this.style.visibility = 'hidden';window.print();return false;" href="javascript://" id="PrintPageLink">
+            <img title="Print this map" src="Print_files/_tabMapPrint.gif" border="0">
+        </a>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+
+    </body>
+</html>
