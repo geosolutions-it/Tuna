@@ -6,7 +6,7 @@ var Tuna = {
 };
 
 Tuna.geoServerBase = Tuna.isDeveloper ? 'http://192.168.1.106:8484' : ( Tuna.isTesting ? 'http://193.43.36.238:8484' : ('http://' + document.domain ) );
-Tuna.restBase = Tuna.isDeveloper ? 'http://192.168.1.106:8484' : ( Tuna.isTesting ? 'http://193.43.36.238:8282' : ('http://' + document.domain ) );
+Tuna.restBase = Tuna.isDeveloper ? 'http://192.168.1.106:8484' : ( Tuna.isTesting ? 'http://193.43.36.238:8484' : ('http://' + document.domain ) );
 
 Tuna.vars = {
 	geoserverURL: Tuna.geoServerBase + "/figis/geoserver",
