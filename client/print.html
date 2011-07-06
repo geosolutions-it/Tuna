@@ -2,12 +2,14 @@
 <html>
     <head>
 	  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Printing Page</title>
+    <title>FIGIS TUNA Printing Page</title>
     
     <script type="text/javascript" src="lib/ext-3.3.1/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="lib/ext-3.3.1/ext-all.js"></script>
 
+    <link rel="stylesheet" type="text/css" href="lib/ext-3.3.1/resources/css/ext-all.css" />
 		<link rel="stylesheet" type="text/css" href="ui.css"/>
+		
 		<script type="text/javascript" src="tunaConfig.js"></script>
 		
 		<script type="text/javascript">
@@ -249,9 +251,25 @@
         <br><b>SUM(Year.Quarter)</b> or <b>AVG(Year.Quarter)</b> cumulative catches or average catches for selected years and quarters.
         <br>
         <br>
-        <a onclick="this.style.visibility = 'hidden';window.print();return false;" href="javascript://" id="PrintPageLink">
-            <img title="Print this map" src="Print_files/_tabMapPrint.gif" border="0">
-        </a>
+        <div id="print-button-div"></div>
+        <script type="text/javascript">					    
+            new Ext.Button({
+                text: "Print",
+                id: 'print-button',
+                iconCls: 'print-button-img',
+                renderTo: "print-button-div",
+                width: 80,
+                height: 30,
+                handler: function(){
+                    Ext.getCmp('print-button').hide();
+                },
+                listeners: {
+                    hide: function(button){
+                        window.print(); 
+                    }
+                }
+            });
+        </script>
         </td>
         </tr>
         </tbody>

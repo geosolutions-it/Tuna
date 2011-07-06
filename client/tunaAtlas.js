@@ -198,6 +198,33 @@ Ext.onReady( function() {
 	
     myMap.zoomToMaxExtent();
     
+    OpenLayers.Util.onImageLoad = function(){
+       // //////////////////////
+       // OL code
+       // //////////////////////
+       if (!this.viewRequestID ||
+            (this.map && this.viewRequestID == this.map.viewRequestID)) { 
+            this.style.display = "";  
+       }
+        
+       OpenLayers.Element.removeClass(this, "olImageLoadError");
+       
+       // //////////////////////
+       // Tuna code
+       // ////////////////////// 
+       if(tuna_map){  
+            Ext.getCmp('quarter-slider').enable(); 
+            Ext.getCmp('years-slider').enable();       
+            
+            Ext.getCmp("quarter-max-button").enable(); 
+            Ext.getCmp("quarter-min-button").enable(); 
+            Ext.getCmp("year-min-largestep").enable(); 
+            Ext.getCmp("year-min-littlestep").enable(); 
+            Ext.getCmp("year-max-littlestep").enable(); 
+            Ext.getCmp("year-max-largestep").enable();  
+       }
+    };
+    
     //
     // support GetFeatureInfo
     //
@@ -303,6 +330,7 @@ Ext.onReady( function() {
                     new Ext.Button({
                         tooltip: "Year quarter increment",
                         tooltipType: 'title',
+                        id: "quarter-max-button",
                         iconCls: "quarter-max-button",
                         handler: function(){
                             var quarters = Ext.getCmp('quarter-slider');	
@@ -360,6 +388,7 @@ Ext.onReady( function() {
                     new Ext.Button({
                         tooltip: "Year quarter decrement",
                         tooltipType: 'title',
+                        id: "quarter-min-button",
                         iconCls: "quarter-min-button",
                         handler: function(){
                             var quarters = Ext.getCmp('quarter-slider');	
@@ -391,6 +420,7 @@ Ext.onReady( function() {
                     new Ext.Button({
                         tooltip: "Large interval decrement",
                         tooltipType: 'title',
+                        id: "year-min-largestep",
                         iconCls: "year-min-largestep",
                         handler: function(){
                             var years = Ext.getCmp('years-slider');	
@@ -411,6 +441,7 @@ Ext.onReady( function() {
                     new Ext.Button({
                         tooltip: "Small interval decrement",
                         tooltipType: 'title',
+                        id: "year-min-littlestep",
                         iconCls: "year-min-littlestep",
                         handler: function(){
                             var years = Ext.getCmp('years-slider');	
@@ -467,6 +498,7 @@ Ext.onReady( function() {
                     new Ext.Button({
                         tooltip: "Small interval increment",
                         tooltipType: 'title',
+                        id: "year-max-littlestep",
                         iconCls: "year-max-littlestep",
                         handler: function(){
                             var years = Ext.getCmp('years-slider');	
@@ -487,6 +519,7 @@ Ext.onReady( function() {
                     new Ext.Button({
                         tooltip: "Large interval increment",
                         tooltipType: 'title',
+                        id: "year-max-largestep",
                         iconCls: "year-max-largestep",
                         handler: function(){
                             var years = Ext.getCmp('years-slider');	
@@ -559,10 +592,13 @@ Ext.onReady( function() {
                                           iconCls: 'print-button-img',
                                           handler: function(){                                              
                                               if (validateMap()) {
-                                                 var href = location.href;
-                                                  var baseURL = location.href.replace(/index/,'print');
-                                                  baseURL += '?' + getViewParams();
-                                                  window.open(baseURL);
+                                                  var href = location.href;
+                                                  if(href.indexOf("#") != -1){
+                                                      href = href.replace("#", "");
+                                                  }
+                                                  var printBaseURL = href + 'print.html?' + getViewParams();
+                                                  
+                                                  window.open(printBaseURL);
                                               }
                                           }
                                       })
@@ -572,7 +608,7 @@ Ext.onReady( function() {
                                 '<tr>',
                                 '<td style="width:200px;"><b>Statistic Operation</b></td>',
                                 '<td style="width:200px;">',
-                                '<select id="gearType" style="width:182px;">',
+                                '<select id="gearType">',
                                 '<option value="-1">Gear Types</option>',
                                 '</select>',
                                 '</td>',
@@ -580,7 +616,7 @@ Ext.onReady( function() {
                                 '<div id="gearslist"></div>',
                                 '</td>',
                                 '<td style="width:210px;">',
-                                '<select id="species" style="width:182px;">',
+                                '<select id="species">',
                                 '<option value="-1">Species</option>',
                                 '</select>',
                                 '</td>',
@@ -817,7 +853,7 @@ Ext.onReady( function() {
             
             if (selection != '') {
                 if (selection.length > 15) selection = selection.substring(0, 15) + "...";
-                $("<div style='background-color:#33cc99; margin-top:5px;margin-right:5px;'>" +
+                $("<div style='background-color:#219914; margin-top:5px;margin-right:5px;'>" +
                 "<table style='font-size:12px;' border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"95%\"><tr><td>" +
                 "<span style='color:#ffffff; width:120px;margin-left:5px;' value='"+$(this).val()+"'>" + selection + 
                 "</span></td><td><a href='#' onclick='removeMe(this, \"gearType\", \"" + selection + "\");' style='float:right;display:block;width:60px;'>remove</a></td></tr></table></div>").appendTo($('#selectedGearType'));
@@ -837,7 +873,7 @@ Ext.onReady( function() {
             
             if (selection != '') {
                 if (selection.length > 15) selection = selection.substring(0, 15) + "...";
-                $("<div style='background-color:#3399cc; margin-top:5px;margin-right:5px;'>" +
+                $("<div style='background-color:#3392FF; margin-top:5px;margin-right:5px;'>" +
                 "<table style='font-size:12px;' border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr><td>" +
                 "<span style='color:#ffffff; width:120px;margin-left:5px;' value='"+$(this).val()+"'>" + selection + 
                 "</span></td><td><a href='#' onclick='removeMe(this, \"species\", \"" + selection + "\");' style='float:right;display:block;width:60px;'>remove</a></td></tr></table></div>").appendTo($('#selectedSpecies'));			
@@ -899,6 +935,16 @@ Ext.onReady( function() {
     };
       
     function issueUpdate(){
+        Ext.getCmp('quarter-slider').disable(); 
+        Ext.getCmp('years-slider').disable();
+        
+        Ext.getCmp("quarter-max-button").disable(); 
+        Ext.getCmp("quarter-min-button").disable(); 
+        Ext.getCmp("year-min-largestep").disable(); 
+        Ext.getCmp("year-min-littlestep").disable(); 
+        Ext.getCmp("year-max-littlestep").disable(); 
+        Ext.getCmp("year-max-largestep").disable(); 
+          
         tuna_map.mergeNewParams({'viewparams':getViewParams()});
         
         var legendParams = [
