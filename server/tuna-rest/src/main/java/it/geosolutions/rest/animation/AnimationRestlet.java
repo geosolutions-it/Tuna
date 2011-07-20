@@ -6,6 +6,7 @@ package it.geosolutions.rest.animation;
 import it.geosolutions.rest.animation.service.Animator;
 import it.geosolutions.rest.animation.service.Animator.AnimatorFormat;
 import it.geosolutions.rest.animation.service.Animator.AnimatorFormat.Key;
+import it.geosolutions.rest.animation.service.exception.InitializationException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -55,26 +56,36 @@ public class AnimationRestlet extends Restlet {
 					new AnimatorFormat(Key.OUTPUT_FORMAT, type == MediaType.VIDEO_AVI ? "AVI" : "GIF", "GIF")
 			};
 			
+			Animator animator;
 			try {
-				Animator animator = new Animator(requestURL, hints);
-				
-				Object output = animator.produce();
-
-				Representation entity = new OutputRepresentation(type) {
+				animator = new Animator(requestURL, hints);
+				try {
 					
-					@Override
-					public void write(OutputStream out) throws IOException {
-						// TODO Auto-generated method stub
-					}
-				};
-				
-	            response.setStatus(Status.SUCCESS_OK);
-	            response.setEntity(entity);			
-			} catch (Exception e) {
+					Object output = animator.produce();
+
+					Representation entity = new OutputRepresentation(type) {
+						
+						@Override
+						public void write(OutputStream out) throws IOException {
+							// TODO Auto-generated method stub
+						}
+					};
+					
+		            response.setStatus(Status.SUCCESS_OK);
+		            response.setEntity(entity);			
+				} catch (Exception e) {
+					LOGGER.severe(e.getLocalizedMessage());
+		            response.setStatus(Status.SERVER_ERROR_INTERNAL);
+		            response.setEntity("Could not produce animation", MediaType.TEXT_PLAIN);
+				} finally {
+					animator.dispose();
+				}
+			} catch (InitializationException e) {
 				LOGGER.severe(e.getLocalizedMessage());
 	            response.setStatus(Status.SERVER_ERROR_INTERNAL);
-	            response.setEntity("Could not produce animation", MediaType.TEXT_PLAIN);
+	            response.setEntity(e.getLocalizedMessage(), MediaType.TEXT_PLAIN);
 			}
+			
         }else {
             response.setStatus(Status.SERVER_ERROR_NOT_IMPLEMENTED);
             response.setEntity("Requested resource not implemented", MediaType.TEXT_PLAIN);

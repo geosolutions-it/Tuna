@@ -9,6 +9,7 @@ import it.geosolutions.rest.animation.catalog.configuration.FrameCatalogConfigur
 import it.geosolutions.rest.animation.catalog.factory.FrameCatalogFactory;
 import it.geosolutions.rest.animation.manager.FrameManager;
 import it.geosolutions.rest.animation.service.Animator.AnimatorFormat.Key;
+import it.geosolutions.rest.animation.service.exception.InitializationException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -84,7 +85,7 @@ public class Animator {
 		}
 	}
 
-	public Animator(String requestURL, AnimatorFormat[] hints) throws Exception {
+	public Animator(String requestURL, AnimatorFormat[] hints) throws InitializationException {
 		if (hints != null) {
 			for (AnimatorFormat hint : hints) {
 				if (hint.getKey() == AnimatorFormat.Key.EXECUTOR_SERVICE) {
@@ -157,7 +158,7 @@ public class Animator {
 	// ////////////////////////////////////////////////////////////////////////
 	// PRIVATE/UTILITY METHODS
 	// ///////////////////////////////////////////////////////////////////////
-	void initFromRequestURL(String URL) throws Exception {
+	void initFromRequestURL(String URL) throws InitializationException {
 		// TODO: implement this
 		
 		// TODO: URL validity checks
@@ -168,9 +169,12 @@ public class Animator {
 		catalogConfig.setMaxAllowedFrames(maxAllowedFrames);
 		this.frameCatalog = FrameCatalogFactory.getCatalog(catalogConfig, URL);
 		
-		// error
-		if(frameCatalog==null)
-			throw new Exception("Unable to create catalog for Request URL: " + URL);
+		// TODO: error... rise up initialization exceptions
+		if(frameCatalog==null) {
+			InitializationException ex = new InitializationException();
+			ex.initCause(new Throwable("Unable to create catalog for Request URL: " + URL));
+			throw ex;
+		}
 		
 		// TODO: initialize the frame manager
 		this.frameManager = null /* TODO: concrete implementation of frame manager */ ;
