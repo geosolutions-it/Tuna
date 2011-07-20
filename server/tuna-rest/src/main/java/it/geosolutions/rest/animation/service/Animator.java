@@ -149,6 +149,6 @@ public class Animator {
 		if(frameCatalog==null)
 			throw new Exception("Unable to create catalog for Request URL: " + URL);
 		
-		
+		// TODO: initialize the frame manager
 	}
 }
