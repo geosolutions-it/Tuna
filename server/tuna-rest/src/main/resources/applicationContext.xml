@@ -44,13 +44,17 @@
   		<property name="daoGears" ref="GearsDAO"/>
   	</bean>
   	
+  	<bean id="animator" class="it.geosolutions.rest.animation.AnimationRestlet">
+  	</bean>
+  	
     <bean id="dispatcher" class="it.geosolutions.app.TUNADispatcher">
     	<property name="resourceMappings">
         	<bean class="java.util.HashMap">
             	<constructor-arg>
                 	<map>
-                  		<entry key="/tuna/species"><ref local="species" /></entry>		
-                  		<entry key="/tuna/gears"><ref local="gears" /></entry>	 	  
+                  		<entry key="/tuna/species"><ref local="species" /></entry>
+                  		<entry key="/tuna/gears"><ref local="gears" /></entry>
+                  		<entry key="/tuna/animation/{type}"><ref local="animator" /></entry>
   					</map>
               	</constructor-arg>
             </bean>

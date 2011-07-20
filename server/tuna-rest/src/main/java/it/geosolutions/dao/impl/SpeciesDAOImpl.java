@@ -22,15 +22,15 @@ public class SpeciesDAOImpl extends JdbcDaoSupport implements SpeciesDAO{
 	public List<Specie> getSpecies(){		
 		
 		SqlRowSet sqlRowSet = getJdbcTemplate().queryForRowSet("SELECT " +
-				"DISTINCT(FIC_ITEM.FIC_ITEM), NAME_E " +
-				"FROM FIC_ITEM JOIN TS_FI_TA ON FIC_ITEM.FIC_ITEM = TS_FI_TA.FIC_ITEM " +
-				"ORDER BY NAME_E"
+				"DISTINCT(FIC_ITEM.FIC_ITEM), LONG_NAME_E " +
+				"FROM FIGIS.FIC_ITEM JOIN FIGIS.TS_FI_TA ON FIC_ITEM.FIC_ITEM = TS_FI_TA.FIC_ITEM " +
+				"ORDER BY LONG_NAME_E"
 	    );
 		
 		List<Specie> species = new ArrayList<Specie>();
 		while(sqlRowSet.next()){
 			int ficItem = sqlRowSet.getInt("FIC_ITEM");
-			String name = sqlRowSet.getString("NAME_E");
+			String name = sqlRowSet.getString("LONG_NAME_E");
 			
 			Specie specie = new Specie(ficItem, name);
 			species.add(specie);

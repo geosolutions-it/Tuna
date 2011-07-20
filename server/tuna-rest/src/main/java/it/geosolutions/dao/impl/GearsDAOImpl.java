@@ -22,7 +22,7 @@ public class GearsDAOImpl extends JdbcDaoSupport implements GearsDAO{
 	public List<Gear> getGears(){		
 		SqlRowSet sqlRowSet = getJdbcTemplate().queryForRowSet("SELECT " +
 				"DISTINCT(REF_GEAR_TYPE.CD_GEAR_TYPE), NAME_E " +
-				"FROM REF_GEAR_TYPE JOIN TS_FI_TA ON REF_GEAR_TYPE.CD_GEAR_TYPE = TS_FI_TA.CD_GEAR " +
+				"FROM FIGIS.REF_GEAR_TYPE JOIN FIGIS.TS_FI_TA ON REF_GEAR_TYPE.CD_GEAR_TYPE = TS_FI_TA.CD_GEAR " +
 				"ORDER BY REF_GEAR_TYPE.CD_GEAR_TYPE"
 		);
 		
