@@ -51,6 +51,7 @@ public class AnimationRestlet extends Restlet {
 			AnimatorFormat[] hints = new AnimatorFormat[] {
 					new AnimatorFormat(Key.EXECUTOR_SERVICE, null, null),
 					new AnimatorFormat(Key.MAX_ALLOWED_FRAMES, null, Integer.MAX_VALUE),
+					new AnimatorFormat(Key.FRAME_RATE, null, 10),
 					new AnimatorFormat(Key.OUTPUT_FORMAT, type == MediaType.VIDEO_AVI ? "AVI" : "GIF", "GIF")
 			};
 			

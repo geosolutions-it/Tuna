@@ -8,8 +8,11 @@ import it.geosolutions.rest.animation.catalog.configuration.FrameCatalogConfigur
 import it.geosolutions.rest.animation.catalog.configuration.FrameCatalogConfiguration.CatalogType;
 import it.geosolutions.rest.animation.catalog.factory.FrameCatalogFactory;
 import it.geosolutions.rest.animation.manager.FrameManager;
+import it.geosolutions.rest.animation.service.Animator.AnimatorFormat.Key;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +36,7 @@ public class Animator {
 	private FrameCatalog frameCatalog;
 	private FrameManager frameManager;
 	private Integer maxAllowedFrames = (Integer) AnimatorFormat.DEFAULT_MAX_ALLOWED_FRAMES.getDefaultValue();
+	private Integer frameRate = (Integer) AnimatorFormat.DEFAULT_FRAME_RATE.getDefaultValue();
 	private String  outputFormat = (String) AnimatorFormat.DEFAULT_OUTPUT_FORMAT.getDefaultValue();
 
 	@SuppressWarnings("unused")
@@ -48,10 +52,12 @@ public class Animator {
 		public enum Key {
 			EXECUTOR_SERVICE,
 			MAX_ALLOWED_FRAMES, 
+			FRAME_RATE,
 			OUTPUT_FORMAT;
 		}
 		
 		static AnimatorFormat DEFAULT_MAX_ALLOWED_FRAMES = new AnimatorFormat(Key.MAX_ALLOWED_FRAMES, null, Integer.MAX_VALUE);
+		static AnimatorFormat DEFAULT_FRAME_RATE = new AnimatorFormat(Key.FRAME_RATE, null, 10);
 		static AnimatorFormat DEFAULT_OUTPUT_FORMAT = new AnimatorFormat(Key.OUTPUT_FORMAT, "GIF", "GIF");
 
 		private final Key key;
@@ -103,8 +109,12 @@ public class Animator {
 				if (hint.getKey() == AnimatorFormat.Key.MAX_ALLOWED_FRAMES)
 					this.maxAllowedFrames = ((Integer) hint.getValue());
 
+				if (hint.getKey() == AnimatorFormat.Key.FRAME_RATE)
+					this.frameRate = ((Integer) hint.getValue());
+				
 				if (hint.getKey() == AnimatorFormat.Key.OUTPUT_FORMAT)
 					this.outputFormat = ((String) hint.getValue());
+				
 			}
 		}
 
@@ -116,13 +126,26 @@ public class Animator {
 	// ///////////////////////////////////////////////////////////////////////
 	public Object produce() throws IOException {
 		// TODO: implement this
-		return null;
+		
+		// TODO: integrity checks ... frameManager != null, etc...
+		
+		Map<Key, Object> params = new HashMap<AnimatorFormat.Key, Object>();
+		params.put(AnimatorFormat.Key.MAX_ALLOWED_FRAMES, this.maxAllowedFrames);
+		params.put(AnimatorFormat.Key.FRAME_RATE, this.frameRate);
+		params.put(AnimatorFormat.Key.EXECUTOR_SERVICE, this.multiThreadedLoader);
+		params.put(AnimatorFormat.Key.OUTPUT_FORMAT, this.outputFormat);
+		
+		return this.frameManager.render(this.frameCatalog, params /* TODO: params */);
 	}
 
 	public synchronized void dispose() {
 		try {
 			if (frameManager != null)
 				frameManager.dispose();
+			
+			if (frameCatalog != null)
+				frameCatalog.dispose();
+			
 		} catch (Exception e) {
 			if (LOGGER.isLoggable(Level.FINE))
 				LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
@@ -150,5 +173,6 @@ public class Animator {
 			throw new Exception("Unable to create catalog for Request URL: " + URL);
 		
 		// TODO: initialize the frame manager
+		this.frameManager = null /* TODO: concrete implementation of frame manager */ ;
 	}
 }

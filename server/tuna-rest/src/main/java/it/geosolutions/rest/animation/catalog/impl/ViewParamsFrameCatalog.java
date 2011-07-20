@@ -6,6 +6,7 @@ package it.geosolutions.rest.animation.catalog.impl;
 import it.geosolutions.rest.animation.catalog.FrameCatalog;
 import it.geosolutions.rest.animation.catalog.configuration.FrameCatalogConfiguration;
 import it.geosolutions.rest.animation.catalog.visitor.FrameCatalogVisitor;
+import it.geosolutions.rest.animation.model.Frame;
 
 /**
  * @author Alessio
@@ -31,6 +32,9 @@ public class ViewParamsFrameCatalog implements FrameCatalog {
 	public void getFrames(FrameCatalogVisitor visitor) {
 		// TODO Auto-generated method stub
 
+		// TODO: for all frames:
+			Frame frame = null;
+			visitor.visit(frame, null /* TODO: progress listener */);
 	}
 
 }

@@ -9,4 +9,6 @@ package it.geosolutions.rest.animation.model;
  */
 public class Frame {
 
+	// TODO: Frame properties
+	
 }
