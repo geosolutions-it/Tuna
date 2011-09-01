@@ -287,7 +287,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                             title: 'Animation',
                             iconCls: 'amination-win',
                             closable: true,
-                            width: 515,
+                            width: (this.imageWidth.isDirty() && this.imageWidth.isValid()) ? this.imageWidth.getValue() : 512,
                             height: 350,
                             layout: 'border',
                             bodyStyle: 'padding: 5px;',
@@ -297,6 +297,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                                     width: 200,
                                     split: true,
                                     collapsible: true,
+                                    border: false,
                                     floatable: false,               
                                     iconCls: 'map-info',
                                     title: "Map Information",
@@ -414,7 +415,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
         var end = this.endYear.getValue();                             
         var yrta = '';
 
-        for(var i=start; i<=end; (this.increment.getValue() != 0 ? i+=this.increment.getValue() : i++)){
+        for(var i=start; i<=end; i++){
            yrta += i;
            
            if(i < end)

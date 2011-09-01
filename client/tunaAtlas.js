@@ -270,8 +270,8 @@ Ext.onReady( function() {
               id: 'info-panel',
               header: false, 
               autoScroll: true,
-              collapsible: true,
-              collapsed: true,
+              //collapsible: true,
+              //collapsed: true,
               width: 730,
               colspan : 2,
               border: true,
@@ -621,7 +621,8 @@ Ext.onReady( function() {
                       items: [
                           {
                               xtype: 'panel',
-                              width: 730,
+                              //width: 730,
+                              height: 150,
                               border: false,
                               autoScroll: true,
                               buttons: [
@@ -706,7 +707,7 @@ Ext.onReady( function() {
                           {
                               xtype: 'panel',
                               height: 300,
-                              width: 730,
+                              //width: 730,
                               autoScroll: true,
                               html : [
                                   '<table class="gfi" border="0" cellpadding="0" cellspacing="0">',
@@ -1107,10 +1108,9 @@ Ext.onReady( function() {
         //
         // Showing Map informations panel
         //
-        var extent = myMap.getExtent();
-        var infoPanel = Ext.getCmp('info-panel');
-        if(infoPanel.collapsed)
-            infoPanel.expand();                    
+        //var infoPanel = Ext.getCmp('info-panel');
+        //if(infoPanel.collapsed)
+        //    infoPanel.expand();                    
     }
 });
 
