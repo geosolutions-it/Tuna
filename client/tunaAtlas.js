@@ -757,8 +757,7 @@ Ext.onReady( function() {
                        new AnimationPanel({
                           width: 730,
                           id: 'animation-panel',
-                          map: myMap,
-                          toDisable: ['controls-panel']
+                          map: myMap
                        })
                     ]
                  }

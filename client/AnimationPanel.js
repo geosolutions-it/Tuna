@@ -4,8 +4,6 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
     
     map: null,
     
-    toDisable: [],
-
     initComponent: function() {  
    
         var yearStore = new Ext.data.JsonStore({
@@ -284,17 +282,6 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                     
                     if(bool){                            
                         url += "&viewparams=" + this.getViewParams();
-                                        
-                        //
-                        // Disabling components.
-                        //  
-                        var formBtns = this.buttons;
-                        formBtns[0].disable();
-                        
-                        var cmpToDisable = this.toDisable;
-                        for(var k=0; k<cmpToDisable.length; k++){
-                            Ext.getCmp(cmpToDisable[k]).disable();
-                        }
                                                                         
                         var animationWin = new Ext.Window({
                             title: 'Animation',
@@ -302,23 +289,9 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                             closable: true,
                             width: (this.imageWidth.isDirty() && this.imageWidth.isValid()) ? this.imageWidth.getValue() : 512,
                             height: 350,
+                            modal: true,
                             layout: 'border',
                             bodyStyle: 'padding: 5px;',
-                            listeners: {
-                                close: function(p){
-                                    //
-                                    // Re-enablid 'Animation' button
-                                    // 
-                                    formBtns[0].enable();
-                                    
-                                    //
-                                    // Re-enablid components.
-                                    //                                     
-                                    for(var k=0; k<cmpToDisable.length; k++){
-                                        Ext.getCmp(cmpToDisable[k]).enable();
-                                    }
-                                }
-                            },
                             items: [
                                 {
                                     region: 'south',
