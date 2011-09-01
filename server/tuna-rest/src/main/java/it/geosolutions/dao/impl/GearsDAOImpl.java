@@ -5,6 +5,7 @@ import it.geosolutions.model.Gear;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -20,6 +21,9 @@ public class GearsDAOImpl extends JdbcDaoSupport implements GearsDAO{
 	private final static Logger LOGGER = Logger.getLogger(GearsDAOImpl.class.toString());
 	
 	public List<Gear> getGears(){		
+		if(LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Getting available Gears");
+		
 		SqlRowSet sqlRowSet = getJdbcTemplate().queryForRowSet("SELECT " +
 				"DISTINCT(REF_GEAR_TYPE.CD_GEAR_TYPE), NAME_E " +
 				"FROM FIGIS.REF_GEAR_TYPE JOIN FIGIS.TS_FI_TA ON REF_GEAR_TYPE.CD_GEAR_TYPE = TS_FI_TA.CD_GEAR " +

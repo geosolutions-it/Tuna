@@ -35,6 +35,10 @@
         <property name="jdbcTemplate" ref="jdbcTemplate" />
     </bean>
     
+    <bean id="YearsDAO" class="it.geosolutions.dao.impl.YearsDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    
     <!-- REST -->
     <bean id="species" class="it.geosolutions.rest.SpeciesDataRestlet">
     	<property name="daoSpecies" ref="SpeciesDAO"/>
@@ -42,6 +46,10 @@
   	
   	<bean id="gears" class="it.geosolutions.rest.GearsDataRestlet">
   		<property name="daoGears" ref="GearsDAO"/>
+  	</bean>
+  	
+  	<bean id="years" class="it.geosolutions.rest.YearsRestlet">
+  		<property name="daoYears" ref="YearsDAO"/>
   	</bean>
   	
   	<bean id="animator" class="it.geosolutions.rest.animation.AnimationRestlet">
@@ -54,6 +62,7 @@
                 	<map>
                   		<entry key="/tuna/species"><ref local="species" /></entry>
                   		<entry key="/tuna/gears"><ref local="gears" /></entry>
+                  		<entry key="/tuna/years"><ref local="years" /></entry>
                   		<entry key="/tuna/animation/{type}"><ref local="animator" /></entry>
   					</map>
               	</constructor-arg>

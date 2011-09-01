@@ -5,6 +5,7 @@ import it.geosolutions.model.Specie;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -20,6 +21,8 @@ public class SpeciesDAOImpl extends JdbcDaoSupport implements SpeciesDAO{
 	private final static Logger LOGGER = Logger.getLogger(SpeciesDAOImpl.class.toString());
 
 	public List<Specie> getSpecies(){		
+		if(LOGGER.isLoggable(Level.INFO))
+			LOGGER.info("Getting available Species");
 		
 		SqlRowSet sqlRowSet = getJdbcTemplate().queryForRowSet("SELECT " +
 				"DISTINCT(FIC_ITEM.FIC_ITEM), LONG_NAME_E " +

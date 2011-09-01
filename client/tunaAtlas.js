@@ -13,6 +13,8 @@ var inputParameters;
 var selectedGears = [];
 var selectedSpecies = [];
 
+var activeTab;
+
 // pink tile avoidance
 OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
 // make OL compute scale according to WMS spec
@@ -212,7 +214,7 @@ Ext.onReady( function() {
        // //////////////////////
        // Tuna code
        // ////////////////////// 
-       if(tuna_map){  
+       if(tuna_map && !(activeTab instanceof AnimationPanel)){        
             Ext.getCmp('quarter-slider').enable(); 
             Ext.getCmp('years-slider').enable();       
             
@@ -265,8 +267,11 @@ Ext.onReady( function() {
             },
             {
               xtype: 'panel',
+              id: 'info-panel',
               header: false, 
               autoScroll: true,
+              collapsible: true,
+              collapsed: true,
               width: 730,
               colspan : 2,
               border: true,
@@ -470,7 +475,7 @@ Ext.onReady( function() {
                         id : 'years-slider',
                         vertical : false,
                         width   : 563,
-                        minValue: 1970,
+                        minValue: 1950,
                         maxValue: new Date().getFullYear(),
                         values  : [new Date().getFullYear() - 1, new Date().getFullYear()],
                         plugins : new Ext.slider.Tip({
@@ -546,64 +551,122 @@ Ext.onReady( function() {
                colspan : 2,
                activeTab: 0,
                border: false,  
+               deferredRender: true,
+               listeners: {
+                  scope: this,
+                  beforetabchange : function(tabPanel, newTab, currentTab){
+                      var controlsTab = Ext.getCmp('controls-panel'); 
+                      
+                      if(controlsTab.isVisible()){
+                      
+                          //
+                          // Checking the Gears Type and Species mandatory selections
+                          // 
+                          if(this.validateSelection()){
+                              return true;
+                          }else{
+                              Ext.Msg.show({
+                                 title: "Tab Selection",
+                                 msg: "Please select at least one Gear Type and one Species",
+                                 buttons: Ext.Msg.OK,
+                                 icon: Ext.MessageBox.WARNING
+                              });
+                              
+                              return false;
+                          }
+                      }
+                  }, 
+                  tabChange: function(tabPanel, panel){
+                      
+                      if(panel.items.first() instanceof AnimationPanel){
+                      
+                          //
+                          // Disabling map sliders
+                          //
+                          Ext.getCmp('quarter-slider').disable(); 
+                          Ext.getCmp('years-slider').disable();       
+                          
+                          Ext.getCmp("quarter-max-button").disable(); 
+                          Ext.getCmp("quarter-min-button").disable(); 
+                          Ext.getCmp("year-min-largestep").disable(); 
+                          Ext.getCmp("year-min-littlestep").disable(); 
+                          Ext.getCmp("year-max-littlestep").disable(); 
+                          Ext.getCmp("year-max-largestep").disable(); 
+                      }else{
+                      
+                          //
+                          // Enabling map sliders
+                          //
+                          Ext.getCmp('quarter-slider').enable(); 
+                          Ext.getCmp('years-slider').enable();       
+                          
+                          Ext.getCmp("quarter-max-button").enable(); 
+                          Ext.getCmp("quarter-min-button").enable(); 
+                          Ext.getCmp("year-min-largestep").enable(); 
+                          Ext.getCmp("year-min-littlestep").enable(); 
+                          Ext.getCmp("year-max-littlestep").enable(); 
+                          Ext.getCmp("year-max-largestep").enable();  
+                      }
+                      
+                      activeTab = panel.items.first();
+                  }
+               },        
                items: [
                   {
                       xtype: 'panel',
                       title: 'Controls',
+                      iconCls: 'controls-tab',
+                      id: 'controls-panel',
+                      width: 730,
                       items: [
                           {
                               xtype: 'panel',
-                              height: 150,
+                              width: 730,
                               border: false,
                               autoScroll: true,
-                              bbar: new Ext.Toolbar({
-                                  height: 30,
-                                  style: 'padding: 0px;',
-                                  items: [
-                                      '->',
-                                      new Ext.Button({
-                                          id: 'map-button',
-                                          text: 'Map',
-                                          iconCls: 'map-button-img',
-                                          handler: function(){                                              
-                                              if (validateMap()) {
-                                                issueUpdate();
-                                              }else{
-                                                  if(selectedSpecies.length < 1){
-                                                      document.getElementById('species').value = -1;
-                                                  }
-                                                  
-                                                  if(selectedGears.length < 1){
-                                                      document.getElementById('gearType').value = -1;
-                                                  }
-                                                  
-                                                  document.getElementById('tabspecies').innerHTML = "";
-                                                  document.getElementById('tabgears').innerHTML = "";
-                                                  document.getElementById('tabquarters').innerHTML = "";
-                                                  document.getElementById('tabperiod').innerHTML = "";
-                                                  document.getElementById('tabtitle').innerHTML = "";
+                              buttons: [
+                                  new Ext.Button({
+                                      id: 'map-button',
+                                      text: 'Map',
+                                      iconCls: 'map-button-img',
+                                      handler: function(){                                              
+                                          if (validateMap()) {
+                                            issueUpdate();
+                                          }else{
+                                              if(selectedSpecies.length < 1){
+                                                  document.getElementById('species').value = -1;
                                               }
-                                          }
-                                      }),
-                                      new Ext.Button({
-                                          id: 'print-button',
-                                          text: 'Print',
-                                          disabled: true,
-                                          iconCls: 'print-button-img',
-                                          handler: function(){                                              
-                                              if (validateMap()) {
-                                                  var href = location.href;
-                                                  if(href.indexOf("#") != -1){
-                                                      href = href.replace("#", "");
-                                                  }
-                                                  var printBaseURL = href + 'print.html?' + getViewParams();
-                                                  
-                                                  window.open(printBaseURL);
+                                              
+                                              if(selectedGears.length < 1){
+                                                  document.getElementById('gearType').value = -1;
                                               }
+                                              
+                                              document.getElementById('tabspecies').innerHTML = "";
+                                              document.getElementById('tabgears').innerHTML = "";
+                                              document.getElementById('tabquarters').innerHTML = "";
+                                              document.getElementById('tabperiod').innerHTML = "";
+                                              document.getElementById('tabtitle').innerHTML = "";
                                           }
-                                      })
-                                  ]
-                              }),
+                                      }
+                                  }),
+                                  new Ext.Button({
+                                      id: 'print-button',
+                                      text: 'Print',
+                                      disabled: true,
+                                      iconCls: 'print-button-img',
+                                      handler: function(){                                              
+                                          if (validateMap()) {
+                                              var href = location.href;
+                                              if(href.indexOf("#") != -1){
+                                                  href = href.replace("#", "");
+                                              }
+                                              var printBaseURL = href + 'print.html?' + getViewParams();
+                                              
+                                              window.open(printBaseURL);
+                                          }
+                                      }
+                                  })
+                              ],
                               html : ['<table  class="gfi" border="0" cellpadding="0" cellspacing="0" style="width:600px;">',
                                 '<tr>',
                                 '<td style="width:200px;"><b>Statistic Operation</b></td>',
@@ -643,6 +706,7 @@ Ext.onReady( function() {
                           {
                               xtype: 'panel',
                               height: 300,
+                              width: 730,
                               autoScroll: true,
                               html : [
                                   '<table class="gfi" border="0" cellpadding="0" cellspacing="0">',
@@ -683,9 +747,18 @@ Ext.onReady( function() {
                           }
                    ]
                  },{
-                     xtype: 'panel',
-                     title: 'Animations',
-                     disabled: true
+                    xtype: 'panel',
+                    border: false,
+                    width: 730,
+                    title: 'Animations',
+                    iconCls: 'animation-tab',
+                    items: [
+                       new AnimationPanel({
+                          width: 730,
+                          id: 'animation-panel',
+                          map: myMap
+                       })
+                    ]
                  }
                ]
            }, {
@@ -707,6 +780,39 @@ Ext.onReady( function() {
               ].join('')
             }
         ]
+    });
+    
+    //
+    // Setting sliders fields tooltips
+    //
+    new Ext.ToolTip({
+        target: 'years-max-field',
+        html: "Years Range Max limit"
+    });
+    
+    new Ext.ToolTip({
+        target: 'years-min-field',
+        html: "Years Range Min limit"
+    });
+    
+    new Ext.ToolTip({
+        target: 'quarter-min-field',
+        html: "Quarters Range Min limit"
+    });
+    
+    new Ext.ToolTip({
+        target: 'quarter-max-field',
+        html: "Quarters Range Max limit"
+    });
+
+    new Ext.ToolTip({
+        target: 'years-slider',
+        html: "Allows to set the years range"
+    });
+        
+    new Ext.ToolTip({
+        target: 'quarter-slider',
+        html: "Allows to set year quarters range"
     });
     
     document.getElementById('specieslist').innerHTML = "<img src=\"images/grid-loading.gif\">";   
@@ -953,7 +1059,7 @@ Ext.onReady( function() {
           "WIDTH=20",
           "HEIGHT=20",
           "format=image/png",
-          "viewparams="+getViewParams()
+          "viewparams=" + getViewParams()
         ];
         
         document.getElementById('legendTunaAtlas').innerHTML = 
@@ -997,6 +1103,14 @@ Ext.onReady( function() {
         document.getElementById('tabtitle').innerHTML = statistic;
         
         Ext.getCmp('print-button').enable();
+        
+        //
+        // Showing Map informations panel
+        //
+        var extent = myMap.getExtent();
+        var infoPanel = Ext.getCmp('info-panel');
+        if(infoPanel.collapsed)
+            infoPanel.expand();                    
     }
 });
 

@@ -2,6 +2,7 @@ package it.geosolutions.test.dao;
 
 import it.geosolutions.dao.GearsDAO;
 import it.geosolutions.dao.SpeciesDAO;
+import it.geosolutions.dao.YearsDAO;
 
 import java.util.logging.Logger;
 
@@ -25,6 +26,7 @@ public abstract class BaseDAOTest extends TestCase {
 
     protected static SpeciesDAO speciesDAO;
     protected static GearsDAO gearsDAO;
+    protected static YearsDAO yearsDAO;
 
     public BaseDAOTest() {
         LOGGER = Logger.getLogger(getClass().toString());
@@ -39,6 +41,7 @@ public abstract class BaseDAOTest extends TestCase {
 
                 speciesDAO = (SpeciesDAO)ctx.getBean("SpeciesDAO");
                 gearsDAO = (GearsDAO)ctx.getBean("GearsDAO");
+                yearsDAO = (YearsDAO)ctx.getBean("YearsDAO");
             }
         }
     }
@@ -52,5 +55,6 @@ public abstract class BaseDAOTest extends TestCase {
     public void testCheckDAOs() {
         assertNotNull(speciesDAO);
         assertNotNull(gearsDAO);
+        assertNotNull(yearsDAO);
     }
 }

@@ -160,6 +160,26 @@ font-weight: normal;
     background-image: url(./images/control_fastforward_blue.png) !important;
 }
 
+.animation-tab{
+    background-image: url(./images/clock_edit.png) !important;
+}
+
+.controls-tab{
+    background-image: url(./images/cog_edit.png) !important;
+}
+
+.animation-button{
+    background-image: url(./images/clock_play.png) !important;
+}
+
+.amination-win{
+    background-image: url(./images/clock.png) !important;
+}
+
+.map-info{
+    background-image: url(./images/information.png) !important;
+}
+
 select{
     background-image: none;
     font-family: Verdana;
