@@ -282,6 +282,10 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                     
                     if(bool){                            
                         url += "&viewparams=" + this.getViewParams();
+                        
+                        var timestamp = new Date();
+                        url += "&timestamp=" + timestamp.getTime();
+                        //alert(url);
                                                                         
                         var animationWin = new Ext.Window({
                             title: 'Animation',
