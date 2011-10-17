@@ -1172,7 +1172,10 @@ Ext.onReady( function() {
           '<img alt="" src="' + Tuna.vars.wms + '?' + legendParams.join('&')+'">';
           
         document.getElementById('nodelist').innerHTML = '';
-        document.getElementById('brkdwn_nodelist').innerHTML = '';	
+        document.getElementById('brkdwn_nodelist').innerHTML = '';
+        	
+        params = "null";
+        brkdwn_params = "null";
         
         //
         // Filling map information table 

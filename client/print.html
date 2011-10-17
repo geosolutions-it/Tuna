@@ -17,7 +17,8 @@
                   border:1px solid #15428B; 
                   margin:0; 
                   padding:0; 
-                  font-size: 12px; 
+                  font-size: 12px;
+                  white-space: nowrap; 
                   /*padding:.1em .1em; */
           }
           
@@ -32,12 +33,14 @@
           
           table.featureInfo td{
                   background:#fff; 
-                  font-size: 12px; 
+                  font-size: 12px;
+                  white-space: nowrap; 
           }
           
           table.featureInfo tr.odd td{
                   background:#CEDFF5; 
-                  font-size: 12px; 
+                  font-size: 12px;
+                  white-space: nowrap; 
           }
           
           table.featureInfo caption{
@@ -201,6 +204,8 @@
 
         <div style="width:680px;height:330px;border:1px solid black;position:relative;overflow:hidden" id="mapTunaAtlas">
 
+
+        
         <div id="WorldGrid" style="width: 680px; height: 330px; overflow: hidden; position: absolute; z-index: 1;">
         </div>
 
@@ -212,39 +217,41 @@
 
         <div id="TopContinents" style="width: 680px; height: 330px; overflow: hidden; position: absolute; z-index: 0;">
         </div>
-        
+        <div id="poweredBy">
+        </div>
+   
         </div>
         </td>
         </tr>
         </tbody>
         </table>
         
-        <table style="background-color:#fff; border:1px solid #000; margin-top:5px; margin-left:2px; font-size:12px; width: 682px;" cellpadding='0' cellspacing='0'><tbody>
-        
-        <tr>
-        <th>Legend</th>
-        <th>Cell info</th>
+        <table style="background-color:#fff; border:1px solid #000; margin-top:8px; margin-left:2px; font-size:12px; width: 682px;" cellpadding='5' cellspacing='5'><tbody>
+
+	<tr><td rowspan="6" style="vertical-align: top; width: 150px;"><b>Legend</b> <br/>Catches (tonnes) <br /><br />
+	<div id="legendTunaAtlas">
+	</div>
+	</td>
+	<td style="vertical-align: top;"><b>Cell info</b><br /><i>Info tables</i><br /><br /></td>
 	</tr>
-	
 	<tr>
-        <th>Catches (tonnes)</th>
-        <th>Aggregated catches</th>
-        </tr>
-        
-        <tr>
-        <td><div id="legendTunaAtlas"></div></td>
-        <td><div id="infoTunaAtlasParams"></div></td>
+	<td style="vertical-align: top;"><b><i>Aggregated catches</i></b></td>
 	</tr>
-	
 	<tr>
-        <th></th>
-        <th>Catches composition</th>	
-        </tr>
-        
-        <tr>
-        <td></td>
-        <td><div id="infoTunaAtlasBrkdwnParams"></div></td>
-        </tr>
+	<td>
+	<div id="infoTunaAtlasParams"></div>
+	</td>
+	</tr>
+	<tr>
+	<td>
+	<b><i>Catches composition</i></b>
+	</td>
+	</tr>
+	<tr>
+	<td>
+	<div id="infoTunaAtlasBrkdwnParams"></div>
+	</td>
+	</tr>
                 
         </tbody>
 	</table>
@@ -291,7 +298,11 @@
                 
                 var legendDiv = document.getElementById('legendTunaAtlas');					     
                 legendDiv.innerHTML = '<img alt="" src="' + Tuna.vars.wms + '?request=GetLegendGraphic&Format=image/png&version=1.1.1&layer=fifao:TUNA_YEARLY_CATCHES&width=20&height=20&viewparams=' + viewParams + '">';
-               
+                
+                var olPoweredByDiv = document.getElementById('poweredBy');
+                olPoweredByDiv.innerHTML = '<img src="images/FAO_blue_20_transp.gif" width="60" height="60" class="olPoweredBy" id="olPoweredBy" title="Powered by..." style="position:absolute;left:615px;top:265px">';
+                
+             
                 var infoDivParams = document.getElementById('infoTunaAtlasParams');                
                 
                 var textParams = Tuna.vars.geoserverURL + '/ows?' + 'SERVICE=WMS&REQUEST=GetFeatureInfo&EXCEPTIONS=application/vnd.ogc.se_xml&BBOX=' + bboxParams + '&X=' + xParams + '&Y=' + yParams + '&INFO_FORMAT=text/html&QUERY_LAYERS=fifao:TUNA_YEARLY_CATCHES&FEATURE_COUNT=50&Layers=fifao:TUNA_YEARLY_CATCHES&Styles=polygon&Srs=EPSG:4326&WIDTH=' + widthParams + '&HEIGHT=' + heightParams + '&format=image/png&viewparams=' + viewParams + '&source=' + inputParameters;
