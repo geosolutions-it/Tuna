@@ -10,7 +10,45 @@
     <link rel="stylesheet" type="text/css" href="lib/ext-3.3.1/resources/css/ext-all.css" />
 		<link rel="stylesheet" type="text/css" href="ui.css"/>
 		
+		<script src="lib/OpenLayers-2.10/OpenLayers.js"></script>
 		<script type="text/javascript" src="tunaConfig.js"></script>
+      <style type="text/css">          	
+          table.featureInfo, table.featureInfo td, table.featureInfo th {
+                  border:1px solid #15428B; 
+                  margin:0; 
+                  padding:0; 
+                  font-size: 12px; 
+                  /*padding:.1em .1em; */
+          }
+          
+          table.featureInfo th{
+                  padding:.2em .2em; 
+                  /*text-transform:lowercase;*/
+                  color:#fff; 
+                  font-weight:bold; 
+                  font-size: 12px; 
+                  background:#15428B; 
+          }
+          
+          table.featureInfo td{
+                  background:#fff; 
+                  font-size: 12px; 
+          }
+          
+          table.featureInfo tr.odd td{
+                  background:#CEDFF5; 
+                  font-size: 12px; 
+          }
+          
+          table.featureInfo caption{
+                  text-align:left; 
+                  font-size:100%; 
+                  font-weight:bold; 
+                  text-transform:lowercase;
+                  padding:.2em .2em; 
+          }
+			
+    </style>		
 		
 		<script type="text/javascript">
         
@@ -178,22 +216,69 @@
         </div>
         </td>
         </tr>
-        <tr align="left" valign="middle">
-        <td><strong>Catches(tonnes)</strong>
-
-        <div style="width:170px;height:120px;border:1px solid black;overflow:hidden;" id="legendTunaAtlas">
-        </div>
+        </tbody>
+        </table>
         
-        <script type="text/javascript">					    
+        <table style="background-color:#fff; border:1px solid #000; margin-top:5px; margin-left:2px; font-size:12px; width: 682px;" cellpadding='0' cellspacing='0'><tbody>
+        
+        <tr>
+        <th>Legend</th>
+        <th>Cell info</th>
+	</tr>
+	
+	<tr>
+        <th>Catches (tonnes)</th>
+        <th>Aggregated catches</th>
+        </tr>
+        
+        <tr>
+        <td><div id="legendTunaAtlas"></div></td>
+        <td><div id="infoTunaAtlasParams"></div></td>
+	</tr>
+	
+	<tr>
+        <th></th>
+        <th>Catches composition</th>	
+        </tr>
+        
+        <tr>
+        <td></td>
+        <td><div id="infoTunaAtlasBrkdwnParams"></div></td>
+        </tr>
+                
+        </tbody>
+	</table>
+		
+        <script type="text/javascript">
+            var inputParameters;					    
             var href = location.href;
-                
+    
             if (href.indexOf("?") != -1) {
-                var viewParams = href.split('?')[1];
-                
-                var topContinent = Tuna.vars.wms + '?LAYERS=fifao:UN_CONTINENT&FORMAT=image/png&TRANSPARENT=FALSE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=768&HEIGHT=768';
-                var allArea = Tuna.vars.wms + '?LAYERS=fifao:FAO_MAJOR,fifao:UN_CONTINENT&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=768&HEIGHT=768';
-                var tunaMap = Tuna.vars.wms + '?LAYERS=fifao:TUNA_YEARLY_CATCHES&BBOX=-180,-90,180,90&WIDTH=768&HEIGHT=768&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&VIEWPARAMS=' + viewParams;
-                var worldGrid = Tuna.vars.wms + '?LAYERS=fifao:GRID_G5&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=768&HEIGHT=768';
+            
+            	var totalParams = href.split('&')[0];
+            	var viewParams = totalParams.split('?')[1];
+            	
+            	var Left = parseInt(href.split('&')[1]);
+            	var Bottom = parseInt(href.split('&')[2]);
+            	var Right = parseInt(href.split('&')[3]);
+            	var Top = parseInt(href.split('&')[4]);
+
+            	var bboxParams = href.split('&')[5];
+            	var xParams = href.split('&')[6];
+            	var yParams = href.split('&')[7];
+            	var widthParams = href.split('&')[8];
+            	var heightParams = href.split('&')[9];
+            	
+            	var bboxBrkdwnParams = href.split('&')[10];
+            	var xBrkdwnParams = href.split('&')[11];
+            	var yBrkdwnParams = href.split('&')[12];
+            	var widthBrkdwnParams = href.split('&')[13];
+            	var heightBrkdwnParams = href.split('&')[14];
+
+                var topContinent = Tuna.vars.wms + '?LAYERS=fifao:UN_CONTINENT&FORMAT=image/png&TRANSPARENT=FALSE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768';
+                var allArea = Tuna.vars.wms + '?LAYERS=fifao:FAO_MAJOR,fifao:UN_CONTINENT&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768';
+                var tunaMap = Tuna.vars.wms + '?LAYERS=fifao:TUNA_YEARLY_CATCHES&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&VIEWPARAMS=' + viewParams;
+                var worldGrid = Tuna.vars.wms + '?LAYERS=fifao:GRID_G5&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768';
                 
                 var topContinentDiv = document.getElementById('TopContinents');				
                 topContinentDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + topContinent + '">';		
@@ -205,8 +290,45 @@
                 worldGridDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + worldGrid + '">';		
                 
                 var legendDiv = document.getElementById('legendTunaAtlas');					     
-                legendDiv.innerHTML = '<img alt="" src="' + Tuna.vars.wms + '?request=GetLegendGraphic&Format=image/png&version=1.1.1&layer=fifao:TUNA_YEARLY_CATCHES&width=20&height=20&viewparams=' + viewParams + '">';					
-            
+                legendDiv.innerHTML = '<img alt="" src="' + Tuna.vars.wms + '?request=GetLegendGraphic&Format=image/png&version=1.1.1&layer=fifao:TUNA_YEARLY_CATCHES&width=20&height=20&viewparams=' + viewParams + '">';
+               
+                var infoDivParams = document.getElementById('infoTunaAtlasParams');                
+                
+                var textParams = Tuna.vars.geoserverURL + '/ows?' + 'SERVICE=WMS&REQUEST=GetFeatureInfo&EXCEPTIONS=application/vnd.ogc.se_xml&BBOX=' + bboxParams + '&X=' + xParams + '&Y=' + yParams + '&INFO_FORMAT=text/html&QUERY_LAYERS=fifao:TUNA_YEARLY_CATCHES&FEATURE_COUNT=50&Layers=fifao:TUNA_YEARLY_CATCHES&Styles=polygon&Srs=EPSG:4326&WIDTH=' + widthParams + '&HEIGHT=' + heightParams + '&format=image/png&viewparams=' + viewParams + '&source=' + inputParameters;
+                
+                document.getElementById('infoTunaAtlasParams').innerHTML = "Loading... please wait... <img src=\"images/grid-loading.gif\">";
+                
+                // sets the HTML provided into the nodelist element
+                function setHTMLParams(response) {
+                   var text = response.responseText;
+                   if (text.indexOf("Exception") < 0){
+                      infoDivParams.innerHTML = text;
+                   }else{
+                      infoDivParams.innerHTML = "";
+                }  
+                } 
+		
+                OpenLayers.loadURL( textParams, '', this, this.setHTMLParams, this.setHTMLParams);
+                               
+                var infoDivBrkdwnParams = document.getElementById('infoTunaAtlasBrkdwnParams');                
+                
+                var textBrkdwnParams = Tuna.vars.geoserverURL + '/ows?' + 'SERVICE=WMS&REQUEST=GetFeatureInfo&EXCEPTIONS=application/vnd.ogc.se_xml&BBOX=' + bboxBrkdwnParams + '&X=' + xBrkdwnParams + '&Y=' + yBrkdwnParams + '&INFO_FORMAT=text/html&QUERY_LAYERS=fifao:TS_FI_TA_BREAKDOWN&FEATURE_COUNT=50&Layers=fifao:TS_FI_TA_BREAKDOWN&Styles=polygon&Srs=EPSG:4326&WIDTH=' + widthBrkdwnParams + '&HEIGHT=' + heightBrkdwnParams + '&format=image/png&viewparams=' + viewParams + '&source=' + inputParameters + '&specbrkdwn=true';
+                
+                document.getElementById('infoTunaAtlasBrkdwnParams').innerHTML = "Loading... please wait... <img src=\"images/grid-loading.gif\">";
+                
+                // sets the HTML provided into the nodelist element
+                function setHTMLBrkdwnParams(response) {
+                   var text = response.responseText;
+                   if (text.indexOf("Exception") < 0){
+                      infoDivBrkdwnParams.innerHTML = text;
+                   }else{
+                      infoDivBrkdwnParams.innerHTML = "";
+                }  
+                } 
+		
+                OpenLayers.loadURL(textBrkdwnParams, '', this, this.setHTMLBrkdwnParams, this.setHTMLBrkdwnParams);
+                
+        
                 var parameters = viewParams.split(';');
                 var title;
                 var species;
@@ -237,8 +359,7 @@
             }
             
         </script>
-        </td>
-        </tr>
+	<table class="reftopmenu" border="0" cellpadding="2" cellspacing="2" width="100%"><tbody>
         <tr align="left" valign="middle">
         <td colspan="2">
         <br>

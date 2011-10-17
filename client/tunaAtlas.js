@@ -10,6 +10,9 @@ var tuna_map;
 var top_continent;
 var inputParameters;
 
+var params;
+var brkdwn_params;
+
 var selectedGears = [];
 var selectedSpecies = [];
 
@@ -20,7 +23,8 @@ OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
 // make OL compute scale according to WMS spec
 OpenLayers.DOTS_PER_INCH = 25.4 / 0.28;
 
-Ext.onReady( function() {			
+Ext.onReady( function() {
+
     OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
         defaultHandlerOptions: {
             'single': true,
@@ -39,7 +43,7 @@ Ext.onReady( function() {
             
             // support GetFeatureInfo
             document.getElementById('nodelist').innerHTML = "Loading... please wait... <img src=\"images/grid-loading.gif\">";
-            var params = {
+            params = {
                 SERVICE: "WMS",
                 REQUEST: "GetFeatureInfo",
                 EXCEPTIONS: "application/vnd.ogc.se_xml",
@@ -60,7 +64,7 @@ Ext.onReady( function() {
             };
             OpenLayers.loadURL( Tuna.vars.geoserverURL + '/ows', params, this, this.setHTML, this.setHTML);
             document.getElementById('brkdwn_nodelist').innerHTML = "Loading... please wait...  <img src=\"images/grid-loading.gif\">";
-            var brkdwn_params = {
+            brkdwn_params = {
                 SERVICE: "WMS",
                 REQUEST: "GetFeatureInfo",
                 EXCEPTIONS: "application/vnd.ogc.se_xml",
@@ -83,7 +87,7 @@ Ext.onReady( function() {
             };
             OpenLayers.loadURL(Tuna.vars.geoserverURL + '/ows', brkdwn_params, this, this.setBRKDWNHTML, this.setBRKDWNHTML);
         },
-        // sets the HTML provided into the brkdwn_nodelist element
+        // sets the HTML provided into the nodelist element
         setHTML: function (response) {
             var text = response.responseText;
             if (text.indexOf("Exception") < 0)
@@ -103,7 +107,8 @@ Ext.onReady( function() {
 	  
 	  bounds = new OpenLayers.Bounds(-180, -90, 180, 90);
 	  
-    var options = { 
+    var options = {
+    	theme: null, 
         controls: [],
         maxExtent: bounds,
         maxResolution: 0.703125,
@@ -188,11 +193,23 @@ Ext.onReady( function() {
         myMap.addLayers([top_continent, world_grid, tuna_map, fao_areas]);
     }
     
+	var poweredByControl = new OpenLayers.Control();
+	OpenLayers.Util.extend(poweredByControl, {
+			draw: function () {
+				OpenLayers.Control.prototype.draw.apply(this, arguments);
+				this.div.innerHTML = '<img src=\"images/FAO_blue_20_transp.gif\" width=\"60\" height=\"60\" class=\"olPoweredBy\" id=\"olPoweredBy\" title=\"Powered by...\" style=\"position:absolute;left:635px;top:285px\"/>';
+				return this.div;
+			}
+
+	});
+	myMap.addControl(poweredByControl);  
+
     //
     // build up all controls            
-	  //
-	  myMap.addControl(new OpenLayers.Control.LoadingPanel());		
-    myMap.addControl(new OpenLayers.Control.PanZoomBar());
+    //
+    myMap.addControl(new OpenLayers.Control.LoadingPanel());		
+    myMap.addControl(new OpenLayers.Control.ZoomPanel());
+    myMap.addControl(new OpenLayers.Control.PanPanel());
     myMap.addControl(new OpenLayers.Control.Navigation());
     myMap.addControl(new OpenLayers.Control.ScaleLine());
     myMap.addControl(new OpenLayers.Control.MousePosition());
@@ -232,8 +249,8 @@ Ext.onReady( function() {
     //
     var click = new OpenLayers.Control.Click();
     myMap.addControl(click);
-    click.activate();	
-	
+    click.activate();
+
     var panel = new Ext.Panel({
         id:'main-panel',
         baseCls:'x-plain',
@@ -251,8 +268,7 @@ Ext.onReady( function() {
                 '<table border="0" cellpadding="0" cellspacing="0" width="100%">',
                 '<tr>',
                 '<td colspan="4">',
-                '<img align="middle" src="http://www.fao.org/fi/figis/selector/assets/images/query.gif">',
-                '<span class="headtext">Atlas of Tuna and Billfish Catches: Interactive display</span>',
+                '<span class="headtext">Atlas of Tuna and Billfish Catches</span>',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -270,8 +286,8 @@ Ext.onReady( function() {
               id: 'info-panel',
               header: false, 
               autoScroll: true,
-              //collapsible: true,
-              //collapsed: true,
+              collapsible: true,
+              collapsed: true,
               width: 730,
               colspan : 2,
               border: true,
@@ -333,7 +349,7 @@ Ext.onReady( function() {
                 height: 350,
                 items: [
                     new Ext.Button({
-                        tooltip: "Year quarter increment",
+                        tooltip: "Click to move up the range",
                         tooltipType: 'title',
                         id: "quarter-max-button",
                         iconCls: "quarter-max-button",
@@ -345,11 +361,12 @@ Ext.onReady( function() {
                             quarters.setValue(0, qt_start+1);
                             quarters.setValue(1, qt_end+1);
                             
-                            Ext.getCmp('quarter-min-field').setValue(quarters.getValues()[0]);
-                            Ext.getCmp('quarter-max-field').setValue(quarters.getValues()[1]);
+                            Ext.getCmp('quarter-min-field').setValue('Q' + quarters.getValues()[0]);
+                            Ext.getCmp('quarter-max-field').setValue('Q' + quarters.getValues()[1]);
                             
                             if (validateSelection()) {
                               issueUpdate();
+                              Ext.getCmp('info-panel').expand();
                             }
                         }
                     }),
@@ -357,29 +374,30 @@ Ext.onReady( function() {
                         id : 'quarter-max-field',
                         xtype: 'textfield',
                         readOnly: true,
-                        width: 22,
-                        value: 4
+                        width: 24,
+                        value: 'Q4'
                     },
                     new Ext.slider.MultiSlider({
                         id : 'quarter-slider',
                         vertical : true,
-                        height   : 240,
+                        height   : 254,
                         minValue: 1,
                         maxValue: 4,
                         values  : [1, 4],
                         plugins : new Ext.slider.Tip({
                           getText: function(thumb){
-                            return String.format('<b>{0}Q</b>', thumb.value);
+                            return String.format('<b>Q{0}</b>', thumb.value);
                           }
                         }),
                         listeners: {
                           changecomplete : function (){
                             if (validateSelection()) {
                               issueUpdate();
+                              Ext.getCmp('info-panel').expand();
                             }
                             
-                            Ext.getCmp('quarter-min-field').setValue(this.getValues()[0]);
-                            Ext.getCmp('quarter-max-field').setValue(this.getValues()[1]);
+                            Ext.getCmp('quarter-min-field').setValue('Q' + this.getValues()[0]);
+                            Ext.getCmp('quarter-max-field').setValue('Q' + this.getValues()[1]);
                           }
                         }
                     }), 
@@ -387,11 +405,11 @@ Ext.onReady( function() {
                         id : 'quarter-min-field',
                         xtype: 'textfield',
                         readOnly: true,
-                        width: 22,
-                        value: 1
+                        width: 24,
+                        value: 'Q1'
                     },
                     new Ext.Button({
-                        tooltip: "Year quarter decrement",
+                        tooltip: "Click to move down the range",
                         tooltipType: 'title',
                         id: "quarter-min-button",
                         iconCls: "quarter-min-button",
@@ -403,11 +421,12 @@ Ext.onReady( function() {
                             quarters.setValue(0, qt_start-1);
                             quarters.setValue(1, qt_end-1);
                             
-                            Ext.getCmp('quarter-min-field').setValue(quarters.getValues()[0]);
-                            Ext.getCmp('quarter-max-field').setValue(quarters.getValues()[1]);
+                            Ext.getCmp('quarter-min-field').setValue('Q' + quarters.getValues()[0]);
+                            Ext.getCmp('quarter-max-field').setValue('Q' + quarters.getValues()[1]);
                             
                             if (validateSelection()) {
                               issueUpdate();
+                              Ext.getCmp('info-panel').expand();
                             }
                         }
                     })
@@ -422,6 +441,29 @@ Ext.onReady( function() {
                   border: false
                 },
                 items: [
+                    new Ext.Button({
+                        tooltip: "First year",
+                        tooltipType: 'title',
+                        id: "first-year",
+                        iconCls: "first-year",
+                        handler: function(){
+                            var years = Ext.getCmp('years-slider');	
+                            //var yr_start = years.getValues()[0];
+                            var yr_end = years.getValues()[1];
+                            
+                            years.setValue(0, '1950');
+                            years.setValue(1, yr_end);
+                            
+                            //Ext.getCmp('years-min-field').setValue(years.getValues()[0]);
+                            //Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
+                            Ext.getCmp('years-min-field').setValue('1950');
+                            
+                            if (validateSelection()) {
+                              issueUpdate();
+                              Ext.getCmp('info-panel').expand();
+                            }
+                        }
+                    }),
                     new Ext.Button({
                         tooltip: "Large interval decrement",
                         tooltipType: 'title',
@@ -440,6 +482,7 @@ Ext.onReady( function() {
                             
                             if (validateSelection()) {
                               issueUpdate();
+                              Ext.getCmp('info-panel').expand();
                             }
                         }
                     }),
@@ -461,6 +504,7 @@ Ext.onReady( function() {
                             
                             if (validateSelection()) {
                               issueUpdate();
+                              Ext.getCmp('info-panel').expand();
                             }
                         }
                     }), 
@@ -469,15 +513,16 @@ Ext.onReady( function() {
                         xtype: 'textfield',
                         readOnly: true,
                         width: 40,
-                        value: new Date().getFullYear() - 1
+                        value: '1950' //new Date().getFullYear() - 1
                     },
                     new Ext.slider.MultiSlider({
                         id : 'years-slider',
                         vertical : false,
-                        width   : 563,
+                        width   : 518,
                         minValue: 1950,
                         maxValue: new Date().getFullYear(),
-                        values  : [new Date().getFullYear() - 1, new Date().getFullYear()],
+                        //values  : [new Date().getFullYear() - 1, new Date().getFullYear()],
+                        values  : ['1950', new Date().getFullYear()],
                         plugins : new Ext.slider.Tip({
                             getText: function(thumb){
                                 return String.format('<b>{0}</b>', thumb.value);
@@ -487,6 +532,7 @@ Ext.onReady( function() {
                             changecomplete : function (){
                                 if (validateSelection()) {
                                   issueUpdate();
+                                  Ext.getCmp('info-panel').expand();
                                 }
                                 Ext.getCmp('years-min-field').setValue(this.getValues()[0]);
                                 Ext.getCmp('years-max-field').setValue(this.getValues()[1]);
@@ -518,6 +564,7 @@ Ext.onReady( function() {
                             
                             if (validateSelection()) {
                               issueUpdate();
+                              Ext.getCmp('info-panel').expand();
                             }
                         }
                     }),				
@@ -539,6 +586,30 @@ Ext.onReady( function() {
                             
                             if (validateSelection()) {
                               issueUpdate();
+                              Ext.getCmp('info-panel').expand();
+                            }
+                        }
+                    }),
+                    new Ext.Button({
+                        tooltip: "Last year",
+                        tooltipType: 'title',
+                        id: "last-year",
+                        iconCls: "last-year",
+                        handler: function(){
+                            var years = Ext.getCmp('years-slider');	
+                            var yr_start = years.getValues()[0];
+                            //var yr_end = years.getValues()[1];
+                            
+                            years.setValue(0, yr_start);
+                            years.setValue(1, new Date().getFullYear());
+                            
+                            //Ext.getCmp('years-min-field').setValue(years.getValues()[0]);
+                            //Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
+                            Ext.getCmp('years-max-field').setValue(new Date().getFullYear());
+                            
+                            if (validateSelection()) {
+                              issueUpdate();
+                              Ext.getCmp('info-panel').expand();
                             }
                         }
                     })
@@ -614,7 +685,7 @@ Ext.onReady( function() {
                items: [
                   {
                       xtype: 'panel',
-                      title: 'Controls',
+                      title: 'Query parameters',
                       iconCls: 'controls-tab',
                       id: 'controls-panel',
                       width: 730,
@@ -622,7 +693,7 @@ Ext.onReady( function() {
                           {
                               xtype: 'panel',
                               //width: 730,
-                              height: 150,
+                              height: 200,
                               border: false,
                               autoScroll: true,
                               buttons: [
@@ -633,6 +704,7 @@ Ext.onReady( function() {
                                       handler: function(){                                              
                                           if (validateMap()) {
                                             issueUpdate();
+                                            Ext.getCmp('info-panel').expand(); 
                                           }else{
                                               if(selectedSpecies.length < 1){
                                                   document.getElementById('species').value = -1;
@@ -647,6 +719,11 @@ Ext.onReady( function() {
                                               document.getElementById('tabquarters').innerHTML = "";
                                               document.getElementById('tabperiod').innerHTML = "";
                                               document.getElementById('tabtitle').innerHTML = "";
+                                              
+                                              Ext.getCmp('info-panel').collapse();
+                                              
+                                              document.getElementById('nodelist').innerHTML = '';
+                                              document.getElementById('brkdwn_nodelist').innerHTML = '';	
                                           }
                                       }
                                   }),
@@ -661,17 +738,25 @@ Ext.onReady( function() {
                                               if(href.indexOf("#") != -1){
                                                   href = href.replace("#", "");
                                               }
-                                              var printBaseURL = href + 'print.html?' + getViewParams();
+                                          if(typeof(params)=="undefined"){
+                                          	var printBaseURL = href + 'print.html?' + getViewParams() + '&' + myMap.getExtent().left + '&' + myMap.getExtent().bottom + '&' + myMap.getExtent().right + '&' + myMap.getExtent().top + '&' + getViewParams() + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null'  ;
+                                          }else{
+                                              var printBaseURL = href + 'print.html?' + getViewParams() + '&' + myMap.getExtent().left + '&' + myMap.getExtent().bottom + '&' + myMap.getExtent().right + '&' + myMap.getExtent().top + '&'  + params.BBOX + '&' + params.X + '&' + params.Y + '&' + params.WIDTH + '&' + params.HEIGHT + '&' + brkdwn_params.BBOX + '&' + brkdwn_params.X + '&' + brkdwn_params.Y + '&' + brkdwn_params.WIDTH + '&' + brkdwn_params.HEIGHT  ;
+                                              }
                                               
                                               window.open(printBaseURL);
                                           }
                                       }
                                   })
                               ],
-                              html : ['<table  class="gfi" border="0" cellpadding="0" cellspacing="0" style="width:600px;">',
+                              html : ['<table  class="gfi" border="0" cellpadding="0" cellspacing="0" style="width:700px;">',
+							  
+							    '<tr>',
+							  '<td colspan="4"><b>Select</b></td>',
+							  '<td><b>Aggregation method</b></td>',
+							  '</tr>',
                                 '<tr>',
-                                '<td style="width:200px;"><b>Statistic Operation</b></td>',
-                                '<td style="width:200px;">',
+                                '<td style="width:200px; vertical-align:top;"> ',
                                 '<select id="gearType">',
                                 '<option value="-1">Gear Types</option>',
                                 '</select>',
@@ -679,7 +764,7 @@ Ext.onReady( function() {
                                 '<td style="width:20px;">',
                                 '<div id="gearslist"></div>',
                                 '</td>',
-                                '<td style="width:210px;">',
+                                '<td style="width:210px; vertical-align:top;">',
                                 '<select id="species">',
                                 '<option value="-1">Species</option>',
                                 '</select>',
@@ -687,12 +772,13 @@ Ext.onReady( function() {
                                 '<td style="width:20px;">',
                                 '<div id="specieslist"></div>',
                                 '</td>',
-                                '</tr>',
+                                  '<td style="width:200px;">',
+								  '<input type="radio" name="statistics" id="sum" checked="checked" /><label for="sum">Sum across years</label> <br />',
+                                '<input type="radio" name="statistics" id="avg" /><label for="avg">Average across years</label> <br />',
+								'</td>',
+								  '</tr>',
                                 '<tr>',
-                                '<td style="vertical-align:top;">',
-                                '<input type="radio" name="statistics" id="sum" checked="checked" /><label for="sum">SUM</label><br />',
-                                '<input type="radio" name="statistics" id="avg" /><label for="avg">AVG</label>',
-                                '</td>',
+                               
                                 '<td style="vertical-align:top;">',
                                 '<div id="selectedGearType"></div>',
                                 '</td>',
@@ -701,7 +787,11 @@ Ext.onReady( function() {
                                 '<td style="vertical-align:top;">',
                                 '<div id="selectedSpecies"></div>',
                                 '</td>',
-                                '</tr>',
+								 '<td>&#160;</td>',
+                                 '<td style="vertical-align:top; align:center;">',
+                               
+                                '</td>',
+								'</tr>',
                                 '</table>'].join('')
                           },
                           {
@@ -711,12 +801,17 @@ Ext.onReady( function() {
                               autoScroll: true,
                               html : [
                                   '<table class="gfi" border="0" cellpadding="0" cellspacing="0">',
-                                  '<tr>',
-                                  '<td style="vertical-align: top;"><i>Click on the map to get cell info</i></td>',
+                                   '<tr>',
+								   '<td rowspan="6" style="vertical-align: top; width: 150px;"><b>Legend</b> <br/>Catches (tonnes) <br /><br />',
+                                  '<div id="legendTunaAtlas">',
+                                  '</div>',
+                                  '</td>',
+                                  '<td style="vertical-align: top;"><b>Cell info</b><br /><i>Click one cell on the map to get more info</i><br /><br /></td>',
                                   '</tr>',
-                                  '<tr>',
-                                  '<td><b><i>Query Results</i></b></td>',
+								  '<tr>',
+                                  '<td style="vertical-align: top;"><b><i>Aggregated catches</i></b></td>',
                                   '</tr>',
+                                 
                                   '<tr>',
                                   '<td>',
                                   '<div id="nodelist"></div>',
@@ -724,7 +819,7 @@ Ext.onReady( function() {
                                   '</tr>',
                                   '<tr>',
                                   '<td>',
-                                  '<b><i>Species Composition</i></b>',
+                                  '<b><i>Catches composition</i></b>',
                                   '</td>',
                                   '</tr>',
                                   '<tr>',
@@ -732,17 +827,8 @@ Ext.onReady( function() {
                                   '<div id="brkdwn_nodelist"></div>',
                                   '</td>',
                                   '</tr>',
-                                  '<tr>',
-                                  '<td>',
-                                  '<b>Catches(tonnes)</b>',
-                                  '</td>',
-                                  '</tr>',
-                                  '<tr>',
-                                  '<td>',
-                                  '<div id="legendTunaAtlas">',
-                                  '</div>',
-                                  '</td>',
-                                  '</tr>',
+                                
+                              
                                   '</table>'
                                 ].join('')
                           }
@@ -770,14 +856,10 @@ Ext.onReady( function() {
                   '<table class="reftopmenu" cellpadding="0" cellspacing="0">',
                   '<tr valign="middle" align="left"><td>',
                   '<br>',
-                  '<u>FIELDS DESCRIPTION</u>',
+                  '<b>Format of the code identifying statistical cells</b>',
                   '<br>',
-                  '<b>Ocean area</b>',
-                  'Code of location of catches is made up of six digits {9-Quadrant 99-Latitude 999-Longitude}, where Quadrant {1=NE, 2=SE, 3=SW and 4=NW}.',
-                  '<br><b>Year.Quarter</b>',
-                  'breakdown of catches in tonnes by years and quarters (i.e. 2001.Q1 = 1st Quarter 2001).',
-                  '<br><b>SUM(Year.Quarter)</b>, or <b>AVG(Year.Quarter)</b>',
-                  'cumulative catches or average catches for selected years and quarters. <br></td></tr></table>'
+                  'Each cell in the map is defined through a 6 digits number: "XYYZZZ". X is the Quadrant (1=NE, 2=SE, 3=SW and 4=NW), YY is Latitude and ZZZ is Longitude.  Latitude and  longitude define the corner of the cell nearest to the point where the Equator is crossed by the Greenwich Meridian. For further information please refer to <a href="http://www.fao.org/fishery/cwp/handbook/G/en" target="_blank">Section G in CWP Handbook of Fishery Statistical Standards</a>.',
+                  '<br></td></tr></table>'
               ].join('')
             }
         ]
@@ -798,12 +880,12 @@ Ext.onReady( function() {
     
     new Ext.ToolTip({
         target: 'quarter-min-field',
-        html: "Quarters Range Min limit"
+        html: "Min limit of the quarters"
     });
     
     new Ext.ToolTip({
         target: 'quarter-max-field',
-        html: "Quarters Range Max limit"
+        html: "Max limit of the quarters"
     });
 
     new Ext.ToolTip({
@@ -813,7 +895,7 @@ Ext.onReady( function() {
         
     new Ext.ToolTip({
         target: 'quarter-slider',
-        html: "Allows to set year quarters range"
+        html: "Move to define the quarters range"
     });
     
     document.getElementById('specieslist').innerHTML = "<img src=\"images/grid-loading.gif\">";   
@@ -960,15 +1042,25 @@ Ext.onReady( function() {
             
             if (selection != '') {
                 if (selection.length > 15) selection = selection.substring(0, 15) + "...";
-                $("<div style='background-color:#219914; margin-top:5px;margin-right:5px;'>" +
-                "<table style='font-size:12px;' border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"95%\"><tr><td>" +
-                "<span style='color:#ffffff; width:120px;margin-left:5px;' value='"+$(this).val()+"'>" + selection + 
-                "</span></td><td><a href='#' onclick='removeMe(this, \"gearType\", \"" + selection + "\");' style='float:right;display:block;width:60px;'>remove</a></td></tr></table></div>").appendTo($('#selectedGearType'));
-            
+                $("<div >" + 
+                    "<table style='background-color:#CEDFF5; border:1px solid #15428B; margin-top:5px; font-size:12px;' cellpadding='0' cellspacing='0' width='87%'>" +
+                	"<tr>" +
+                	    "<td>" + 
+                		"<span style='color:#15428B; font-weight:bold; margin-left:5px;' value='" + $(this).val() + "'>" + selection + "</span>" + 
+                            "</td>" +
+                            "<td width='13'>" +
+                		"<a href='#' onclick='removeMe(this, \"gearType\", \"" + selection + "\");' title='Remove item'>X</a>" + 
+                	    "</td>" +
+                	    "<td width='13'>" +
+                		"<a href='#' onclick='' title='Info'>I</a>" +
+                	    "</td>" +
+                	"</tr>" + 
+                     "</table>" +
+                  "</div>").appendTo($('#selectedGearType'));
                 selectedGears.push(selection);
             }
         }
-        
+        /*#219914*/
         Ext.getCmp('print-button').disable();
     });
 
@@ -980,11 +1072,21 @@ Ext.onReady( function() {
             
             if (selection != '') {
                 if (selection.length > 15) selection = selection.substring(0, 15) + "...";
-                $("<div style='background-color:#3392FF; margin-top:5px;margin-right:5px;'>" +
-                "<table style='font-size:12px;' border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr><td>" +
-                "<span style='color:#ffffff; width:120px;margin-left:5px;' value='"+$(this).val()+"'>" + selection + 
-                "</span></td><td><a href='#' onclick='removeMe(this, \"species\", \"" + selection + "\");' style='float:right;display:block;width:60px;'>remove</a></td></tr></table></div>").appendTo($('#selectedSpecies'));			
-                
+                $("<div>" + 
+                    "<table style='background-color:#CEDFF5; border:1px solid #15428B; margin-top:5px; font-size:12px;' cellpadding='0' cellspacing='0' width='83%'>" +
+                	"<tr>" +
+                	    "<td>" + 
+                		"<span style='color:#15428B; font-weight:bold; margin-left:5px;' value='" + $(this).val() + "'>" + selection + "</span>" + 
+                            "</td>" +
+                            "<td width='13'>" +
+                		"<a href='#' onclick='removeMe(this, \"species\", \"" + selection + "\");' title='Remove item'>X</a>" + 
+                	    "</td>" + 
+                	    "<td width='13'>" +
+                		"<a href='#' onclick='' title='Info'>I</a>" +
+                	    "</td>" +
+                	"</tr>" + 
+                     "</table>" +
+                  "</div>").appendTo($('#selectedSpecies'));
                 selectedSpecies.push(selection);	
             }
         }
@@ -1001,8 +1103,11 @@ Ext.onReady( function() {
         var cd_gear =  'CD_GEAR:';
         
         for(g = 0; g < $('#selectedGearType').find('tr').length; g++) {
+        
             var selected = $($('#selectedGearType').find('tr')[g]).contents()[0];
+            
             var value = $($(selected).contents()[0]).attr('value');
+            
             cd_gear += value + (g < $('#selectedGearType').find('tr').length - 1 ? '\\,' : '');
         }
         

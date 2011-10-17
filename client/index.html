@@ -1,9 +1,10 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
     <head>
 	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
       <title>TUNA ATLAS DEMO</title>
-
+      <script type="text/javascript">	
+      </script>
       <script type="text/javascript" src="lib/ext-3.3.1/adapter/ext/ext-base.js"></script>
       <script type="text/javascript" src="lib/ext-3.3.1/ext-all.js"></script>
       <link rel="stylesheet" type="text/css" href="lib/ext-3.3.1/resources/css/ext-all.css" />
@@ -22,8 +23,8 @@
 
       <script type="text/javascript" src="tunaConfig.js"></script>
       <script type="text/javascript" src="tunaAtlas.js"></script>
-
       <style type="text/css">
+
           #main-panel td {
             padding:2px;
           }
@@ -36,22 +37,23 @@
             background-position:center;
             background-repeat:no-repeat;
             display: none;
-          }			
-          
+          }		
+          	
           table.featureInfo, table.featureInfo td, table.featureInfo th {
-                  border:1px solid #ddd; 
+                  border:1px solid #15428B; 
                   margin:0; 
                   padding:0; 
                   font-size: 12px; 
-                  padding:.1em .1em; 
+                  /*padding:.1em .1em; */
           }
           
           table.featureInfo th{
                   padding:.2em .2em; 
-                  text-transform:uppercase; 
+                  /*text-transform:lowercase;*/
+                  color:#fff; 
                   font-weight:bold; 
                   font-size: 12px; 
-                  background:#eee; 
+                  background:#15428B; 
           }
           
           table.featureInfo td{
@@ -60,7 +62,7 @@
           }
           
           table.featureInfo tr.odd td{
-                  background:#eee; 
+                  background:#CEDFF5; 
                   font-size: 12px; 
           }
           
@@ -68,10 +70,11 @@
                   text-align:left; 
                   font-size:100%; 
                   font-weight:bold; 
-                  text-transform:uppercase; 
+                  text-transform:lowercase;
                   padding:.2em .2em; 
-          }			
-		  </style>		
+          }
+			
+    </style>		
     </head>
     <body>
         <div id="mappanel"></div>
