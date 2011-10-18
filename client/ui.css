@@ -356,6 +356,7 @@ select{
     font-style: normal;
     opacity: 0.7;
     position: absolute;
+    z-index: 1000;
 }
 
 .olHandlerBoxZoomBox {
