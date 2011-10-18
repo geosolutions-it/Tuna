@@ -62,6 +62,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
             fieldLabel: "Width (between 256 and 1024)",
             minValue: 256,
             maxValue: 1024,
+            allowBlank : false,
             allowDecimals: false,
             allowNegative: false,
             value: 512
