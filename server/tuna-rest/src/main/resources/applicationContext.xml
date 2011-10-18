@@ -14,12 +14,24 @@
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
 		<property name="url" value="${dataSource.url}"/>
-		<property name="maxActive" value="10" />
-	</bean>
+		<property name="initialSize" value="15" />
+		<property name="maxActive" value="10" />		
+		<property name="maxIdle" value="4" />
+		<property name="minIdle" value="0" />
+		<property name="maxWait" value="10" />
+		<property name="validationQuery" value="SELECT SYSDATE FROM DUAL" />
+		<property name="validationQueryTimeout" value="5" />		
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="true" />
+		<!--property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="20" /-->
+		<property name="poolPreparedStatements" value="true" />
+		<property name="maxOpenPreparedStatements" value="10" />		
+	</bean> 
 	
-	<!-- Spring JNDI
+	<!-- Spring JNDI 
 	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="jndiName" value="java:comp/env/jdbc/${jndy.datasource}"/>
+		<property name="jndiName" value="java:comp/env/jdbc/${jndi.datasource}"/>
 	</bean>  -->
 	
 	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
