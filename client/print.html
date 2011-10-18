@@ -232,10 +232,10 @@
 	<div id="legendTunaAtlas">
 	</div>
 	</td>
-	<td style="vertical-align: top;"><b>Cell info</b><br /><i>Info tables</i><br /><br /></td>
+	<td style="vertical-align: top;"><b id="Cell info">Cell info</b><br /><i id="Info tables">Info tables</i><br /><br /></td>
 	</tr>
 	<tr>
-	<td style="vertical-align: top;"><b><i>Aggregated catches</i></b></td>
+	<td style="vertical-align: top;"><b><i id="Aggregated catches" >Aggregated catches</i></b></td>
 	</tr>
 	<tr>
 	<td>
@@ -244,7 +244,7 @@
 	</tr>
 	<tr>
 	<td>
-	<b><i>Catches composition</i></b>
+	<b><i id="Catches composition">Catches composition</i></b>
 	</td>
 	</tr>
 	<tr>
@@ -303,41 +303,51 @@
                 olPoweredByDiv.innerHTML = '<img src="images/FAO_blue_20_transp.gif" width="60" height="60" class="olPoweredBy" id="olPoweredBy" title="Powered by..." style="position:absolute;left:615px;top:265px">';
                 
              
-                var infoDivParams = document.getElementById('infoTunaAtlasParams');                
+                                
                 
-                var textParams = Tuna.vars.geoserverURL + '/ows?' + 'SERVICE=WMS&REQUEST=GetFeatureInfo&EXCEPTIONS=application/vnd.ogc.se_xml&BBOX=' + bboxParams + '&X=' + xParams + '&Y=' + yParams + '&INFO_FORMAT=text/html&QUERY_LAYERS=fifao:TUNA_YEARLY_CATCHES&FEATURE_COUNT=50&Layers=fifao:TUNA_YEARLY_CATCHES&Styles=polygon&Srs=EPSG:4326&WIDTH=' + widthParams + '&HEIGHT=' + heightParams + '&format=image/png&viewparams=' + viewParams + '&source=' + inputParameters;
+                if(bboxParams=='undefined'){ 
+                	var table1 = document.getElementById("Aggregated catches");   
+                	var table2 = document.getElementById("Catches composition");
+                	var table3 = document.getElementById("Cell info");
+                	var table4 = document.getElementById("Info tables");
+                	table1.innerHTML = "";
+                	table2.innerHTML = "";  
+			table3.innerHTML = "";	  
+			table4.innerHTML = "";			
+                }else {
+		        var infoDivParams = document.getElementById('infoTunaAtlasParams');
+		        var textParams = Tuna.vars.geoserverURL + '/ows?' + 'SERVICE=WMS&REQUEST=GetFeatureInfo&EXCEPTIONS=application/vnd.ogc.se_xml&BBOX=' + bboxParams + '&X=' + xParams + '&Y=' + yParams + '&INFO_FORMAT=text/html&QUERY_LAYERS=fifao:TUNA_YEARLY_CATCHES&FEATURE_COUNT=50&Layers=fifao:TUNA_YEARLY_CATCHES&Styles=polygon&Srs=EPSG:4326&WIDTH=' + widthParams + '&HEIGHT=' + heightParams + '&format=image/png&viewparams=' + viewParams + '&source=' + inputParameters;
+		        
+		        document.getElementById('infoTunaAtlasParams').innerHTML = "Loading... please wait... <img src=\"images/grid-loading.gif\">";
+		        
+		        // sets the HTML provided into the nodelist element
+		        function setHTMLParams(response) {
+		           var text = response.responseText;
+		           if (text.indexOf("Exception") < 0){
+		              infoDivParams.innerHTML = text;
+		           }else{
+		              infoDivParams.innerHTML = "";
+		        }  
+		        }
+		        OpenLayers.loadURL( textParams, '', this, this.setHTMLParams, this.setHTMLParams);
+
+		        var infoDivBrkdwnParams = document.getElementById('infoTunaAtlasBrkdwnParams');
+		        var textBrkdwnParams = Tuna.vars.geoserverURL + '/ows?' + 'SERVICE=WMS&REQUEST=GetFeatureInfo&EXCEPTIONS=application/vnd.ogc.se_xml&BBOX=' + bboxBrkdwnParams + '&X=' + xBrkdwnParams + '&Y=' + yBrkdwnParams + '&INFO_FORMAT=text/html&QUERY_LAYERS=fifao:TS_FI_TA_BREAKDOWN&FEATURE_COUNT=50&Layers=fifao:TS_FI_TA_BREAKDOWN&Styles=polygon&Srs=EPSG:4326&WIDTH=' + widthBrkdwnParams + '&HEIGHT=' + heightBrkdwnParams + '&format=image/png&viewparams=' + viewParams + '&source=' + inputParameters + '&specbrkdwn=true';
+		        
+		        document.getElementById('infoTunaAtlasBrkdwnParams').innerHTML = "Loading... please wait... <img src=\"images/grid-loading.gif\">";
+		        
+		        // sets the HTML provided into the nodelist element
+		        function setHTMLBrkdwnParams(response) {
+		           var text = response.responseText;
+		           if (text.indexOf("Exception") < 0){
+		              infoDivBrkdwnParams.innerHTML = text;
+		           }else{
+		              infoDivBrkdwnParams.innerHTML = "";
+		        }  
+		        }
+		        OpenLayers.loadURL(textBrkdwnParams, '', this, this.setHTMLBrkdwnParams, this.setHTMLBrkdwnParams); 
+		}
                 
-                document.getElementById('infoTunaAtlasParams').innerHTML = "Loading... please wait... <img src=\"images/grid-loading.gif\">";
-                
-                // sets the HTML provided into the nodelist element
-                function setHTMLParams(response) {
-                   var text = response.responseText;
-                   if (text.indexOf("Exception") < 0){
-                      infoDivParams.innerHTML = text;
-                   }else{
-                      infoDivParams.innerHTML = "";
-                }  
-                } 
-		
-                OpenLayers.loadURL( textParams, '', this, this.setHTMLParams, this.setHTMLParams);
-                               
-                var infoDivBrkdwnParams = document.getElementById('infoTunaAtlasBrkdwnParams');                
-                
-                var textBrkdwnParams = Tuna.vars.geoserverURL + '/ows?' + 'SERVICE=WMS&REQUEST=GetFeatureInfo&EXCEPTIONS=application/vnd.ogc.se_xml&BBOX=' + bboxBrkdwnParams + '&X=' + xBrkdwnParams + '&Y=' + yBrkdwnParams + '&INFO_FORMAT=text/html&QUERY_LAYERS=fifao:TS_FI_TA_BREAKDOWN&FEATURE_COUNT=50&Layers=fifao:TS_FI_TA_BREAKDOWN&Styles=polygon&Srs=EPSG:4326&WIDTH=' + widthBrkdwnParams + '&HEIGHT=' + heightBrkdwnParams + '&format=image/png&viewparams=' + viewParams + '&source=' + inputParameters + '&specbrkdwn=true';
-                
-                document.getElementById('infoTunaAtlasBrkdwnParams').innerHTML = "Loading... please wait... <img src=\"images/grid-loading.gif\">";
-                
-                // sets the HTML provided into the nodelist element
-                function setHTMLBrkdwnParams(response) {
-                   var text = response.responseText;
-                   if (text.indexOf("Exception") < 0){
-                      infoDivBrkdwnParams.innerHTML = text;
-                   }else{
-                      infoDivBrkdwnParams.innerHTML = "";
-                }  
-                } 
-		
-                OpenLayers.loadURL(textBrkdwnParams, '', this, this.setHTMLBrkdwnParams, this.setHTMLBrkdwnParams);
                 
         
                 var parameters = viewParams.split(';');
