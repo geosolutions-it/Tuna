@@ -54,7 +54,6 @@
     </style>		
 		
 		<script type="text/javascript">
-        
         function speciesRequest(data, reqURL){
             var url = reqURL;
             Ext.Ajax.request({
@@ -142,7 +141,7 @@
 		
     </head>
     
-    <body>
+    <body >
         <table border="0" cellpadding="0" cellspacing="0" width="100%">
 				<tr>
 				<td colspan="4">
@@ -226,7 +225,7 @@
         </tbody>
         </table>
         
-        <table style="background-color:#fff; border:1px solid #000; margin-top:8px; margin-left:2px; font-size:12px; width: 682px;" cellpadding='5' cellspacing='5'><tbody>
+        <table  id="infoContent" style="background-color:#fff; border:1px solid #000; margin-top:8px; margin-left:2px; font-size:12px; width: 682px;" cellpadding='5' cellspacing='5'><tbody>
 
 	<tr><td rowspan="6" style="vertical-align: top; width: 150px;"><b>Legend</b> <br/>Catches (tonnes) <br /><br />
 	<div id="legendTunaAtlas">
@@ -255,8 +254,41 @@
                 
         </tbody>
 	</table>
-		
+	<table class="reftopmenu" border="0" cellpadding="2" cellspacing="2" width="100%"><tbody>
+        <tr align="left" valign="middle">
+        <td colspan="2">
+        <br>
+        <u>FIELDS DESCRIPTION</u>
+        <br>
+        <b>Ocean area</b>
+        Code of location of catches is made up of six digits {9-Quadrant 
+        99-Latitude 999-Longitude}, where Quadrant {1=NE, 2=SE, 3=SW and 4=NW}.
+        <br><b>Year.Quarter</b> breakdown of catches in tonnes by years and quarters (i.e. 2001.Q1 =  1st Quarter 2001).
+        <br><b>SUM(Year.Quarter)</b> or <b>AVG(Year.Quarter)</b> cumulative catches or average catches for selected years and quarters.
+        <br>
+        <br>
+        <div id="print-button-div"></div>
         <script type="text/javascript">
+        
+            var printButton;
+            printButton = new Ext.Button({
+                text: "Print",
+                id: 'print-button',
+                iconCls: 'print-button-img',
+                renderTo: "print-button-div",
+                disabled: true,
+                width: 80,
+                height: 30,
+                handler: function(){
+                    Ext.getCmp('print-button').hide();                    	
+                },
+                listeners: {
+                    hide: function(button){
+                
+                       window.print(); 
+                    }
+                },
+            });
             var inputParameters;					    
             var href = location.href;
     
@@ -302,9 +334,6 @@
                 var olPoweredByDiv = document.getElementById('poweredBy');
                 olPoweredByDiv.innerHTML = '<img src="images/FAO_blue_20_transp.gif" width="60" height="60" class="olPoweredBy" id="olPoweredBy" title="Powered by..." style="position:absolute;left:615px;top:265px">';
                 
-             
-                                
-                
                 if(bboxParams=='undefined'){ 
                 	var table1 = document.getElementById("Aggregated catches");   
                 	var table2 = document.getElementById("Catches composition");
@@ -313,13 +342,14 @@
                 	table1.innerHTML = "";
                 	table2.innerHTML = "";  
 			table3.innerHTML = "";	  
-			table4.innerHTML = "";			
+			table4.innerHTML = "";
+			printButton.enable();			
                 }else {
 		        var infoDivParams = document.getElementById('infoTunaAtlasParams');
 		        var textParams = Tuna.vars.geoserverURL + '/ows?' + 'SERVICE=WMS&REQUEST=GetFeatureInfo&EXCEPTIONS=application/vnd.ogc.se_xml&BBOX=' + bboxParams + '&X=' + xParams + '&Y=' + yParams + '&INFO_FORMAT=text/html&QUERY_LAYERS=fifao:TUNA_YEARLY_CATCHES&FEATURE_COUNT=50&Layers=fifao:TUNA_YEARLY_CATCHES&Styles=polygon&Srs=EPSG:4326&WIDTH=' + widthParams + '&HEIGHT=' + heightParams + '&format=image/png&viewparams=' + viewParams + '&source=' + inputParameters;
 		        
 		        document.getElementById('infoTunaAtlasParams').innerHTML = "Loading... please wait... <img src=\"images/grid-loading.gif\">";
-		        
+
 		        // sets the HTML provided into the nodelist element
 		        function setHTMLParams(response) {
 		           var text = response.responseText;
@@ -341,11 +371,12 @@
 		           var text = response.responseText;
 		           if (text.indexOf("Exception") < 0){
 		              infoDivBrkdwnParams.innerHTML = text;
+		              printButton.enable();
 		           }else{
 		              infoDivBrkdwnParams.innerHTML = "";
 		        }  
 		        }
-		        OpenLayers.loadURL(textBrkdwnParams, '', this, this.setHTMLBrkdwnParams, this.setHTMLBrkdwnParams); 
+		        OpenLayers.loadURL(textBrkdwnParams, '', this, this.setHTMLBrkdwnParams, this.setHTMLBrkdwnParams);
 		}
                 
                 
@@ -378,39 +409,6 @@
                 speciesRequest(species, Tuna.speciesURL);
                 gearsRequest(gears, Tuna.gearsURL);
             }
-            
-        </script>
-	<table class="reftopmenu" border="0" cellpadding="2" cellspacing="2" width="100%"><tbody>
-        <tr align="left" valign="middle">
-        <td colspan="2">
-        <br>
-        <u>FIELDS DESCRIPTION</u>
-        <br>
-        <b>Ocean area</b>
-        Code of location of catches is made up of six digits {9-Quadrant 
-        99-Latitude 999-Longitude}, where Quadrant {1=NE, 2=SE, 3=SW and 4=NW}.
-        <br><b>Year.Quarter</b> breakdown of catches in tonnes by years and quarters (i.e. 2001.Q1 =  1st Quarter 2001).
-        <br><b>SUM(Year.Quarter)</b> or <b>AVG(Year.Quarter)</b> cumulative catches or average catches for selected years and quarters.
-        <br>
-        <br>
-        <div id="print-button-div"></div>
-        <script type="text/javascript">					    
-            new Ext.Button({
-                text: "Print",
-                id: 'print-button',
-                iconCls: 'print-button-img',
-                renderTo: "print-button-div",
-                width: 80,
-                height: 30,
-                handler: function(){
-                    Ext.getCmp('print-button').hide();
-                },
-                listeners: {
-                    hide: function(button){
-                        window.print(); 
-                    }
-                }
-            });
         </script>
         </td>
         </tr>
