@@ -203,8 +203,6 @@
 
         <div style="width:680px;height:330px;border:1px solid black;position:relative;overflow:hidden" id="mapTunaAtlas">
 
-
-        
         <div id="WorldGrid" style="width: 680px; height: 330px; overflow: hidden; position: absolute; z-index: 1;">
         </div>
 
@@ -269,7 +267,8 @@
         <br>
         <div id="print-button-div"></div>
         <script type="text/javascript">
-        
+
+    	  
             var printButton;
             printButton = new Ext.Button({
                 text: "Print",
@@ -287,13 +286,15 @@
                 
                        window.print(); 
                     }
-                },
+                }
             });
+            
             var inputParameters;					    
             var href = location.href;
     
             if (href.indexOf("?") != -1) {
-            
+
+	                
             	var totalParams = href.split('&')[0];
             	var viewParams = totalParams.split('?')[1];
             	
@@ -301,33 +302,51 @@
             	var Bottom = parseInt(href.split('&')[2]);
             	var Right = parseInt(href.split('&')[3]);
             	var Top = parseInt(href.split('&')[4]);
-
-            	var bboxParams = href.split('&')[5];
-            	var xParams = href.split('&')[6];
-            	var yParams = href.split('&')[7];
-            	var widthParams = href.split('&')[8];
-            	var heightParams = href.split('&')[9];
             	
-            	var bboxBrkdwnParams = href.split('&')[10];
-            	var xBrkdwnParams = href.split('&')[11];
-            	var yBrkdwnParams = href.split('&')[12];
-            	var widthBrkdwnParams = href.split('&')[13];
-            	var heightBrkdwnParams = href.split('&')[14];
+            	var layer1 = href.split('&')[5];
+            	var layer2 = href.split('&')[6];
+            	var layer3 = href.split('&')[7];
+            	
+            	var bboxParams = href.split('&')[8];
+            	var xParams = href.split('&')[9];
+            	var yParams = href.split('&')[10];
+            	var widthParams = href.split('&')[11];
+            	var heightParams = href.split('&')[12];
+            	
+            	var bboxBrkdwnParams = href.split('&')[13];
+            	var xBrkdwnParams = href.split('&')[14];
+            	var yBrkdwnParams = href.split('&')[15];
+            	var widthBrkdwnParams = href.split('&')[16];
+            	var heightBrkdwnParams = href.split('&')[17];
 
-                var topContinent = Tuna.vars.wms + '?LAYERS=fifao:UN_CONTINENT&FORMAT=image/png&TRANSPARENT=FALSE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768';
-                var allArea = Tuna.vars.wms + '?LAYERS=fifao:FAO_MAJOR,fifao:UN_CONTINENT&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768';
-                var tunaMap = Tuna.vars.wms + '?LAYERS=fifao:TUNA_YEARLY_CATCHES&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&VIEWPARAMS=' + viewParams;
-                var worldGrid = Tuna.vars.wms + '?LAYERS=fifao:GRID_G5&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768';
+                var topContinent = Tuna.vars.wms + '?LAYERS=fifao:UN_CONTINENT&FORMAT=image/png&TRANSPARENT=FALSE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768&format_options=layout:scaleline';
+                
+                if (layer3 == 'true'){
+		        var allArea = Tuna.vars.wms + '?LAYERS=fifao:FAO_MAJOR,fifao:UN_CONTINENT&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768&format_options=layout:scaleline';
+
+                var allAreaDiv = document.getElementById('AllAreas');				
+                allAreaDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + allArea + '">';
+                
+                }
+                
+                if (layer2 == 'true'){
+		        var tunaMap = Tuna.vars.wms + '?LAYERS=fifao:TUNA_YEARLY_CATCHES&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&VIEWPARAMS=' + viewParams + '&format_options=layout:scaleline';
+		        
+                var tunaDiv = document.getElementById('TunaAtlas');				
+                tunaDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + tunaMap + '">';	
+                
+                }
+                
+                if (layer1 == 'true'){
+		        var worldGrid = Tuna.vars.wms + '?LAYERS=fifao:GRID_G5&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768&format_options=layout:scaleline';
+		        
+                var worldGridDiv = document.getElementById('WorldGrid');				
+                worldGridDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + worldGrid + '">';	
+                }
                 
                 var topContinentDiv = document.getElementById('TopContinents');				
                 topContinentDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + topContinent + '">';		
-                var allAreaDiv = document.getElementById('AllAreas');				
-                allAreaDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + allArea + '">';		
-                var tunaDiv = document.getElementById('TunaAtlas');				
-                tunaDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + tunaMap + '">';		
-                var worldGridDiv = document.getElementById('WorldGrid');				
-                worldGridDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + worldGrid + '">';		
-                
+                                
                 var legendDiv = document.getElementById('legendTunaAtlas');					     
                 legendDiv.innerHTML = '<img alt="" src="' + Tuna.vars.wms + '?request=GetLegendGraphic&Format=image/png&version=1.1.1&layer=fifao:TUNA_YEARLY_CATCHES&width=20&height=20&viewparams=' + viewParams + '">';
                 

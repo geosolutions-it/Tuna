@@ -1,0 +1,7 @@
+
+<layout>
+    <decoration type="scaleline" affinity="bottom,left" offset="6,36">
+    	<option name="fontsize" value="12"/>
+    </decoration>	
+        
+</layout>

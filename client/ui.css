@@ -205,7 +205,7 @@ select{
    display: block;
    position: absolute;
    left: 10px;
-   bottom: 15px;
+   bottom: 20px;
    font-size: xx-small;
 }
 
@@ -272,13 +272,13 @@ select{
     right: 0px;
 }
 .olControlMousePosition {
-    bottom: 0;
+    bottom: 3;
     display: block;
     font-family: Arial;
     font-size: 11;
     position: absolute;
     background: #ffffff;
-    left: 3px;
+    left: 10px;
 }
 .olControlPanPanel {
     top: 10px;
@@ -366,4 +366,17 @@ select{
     opacity: 0.50;
     font-size: 1px;
     filter: alpha(opacity=50);
+}
+
+#quarter-min-field {
+    padding-bottom: 0;
+    padding-left: 1;
+    padding-top: 0;
+    padding-right: 0;
+}
+#quarter-max-field {
+    padding-bottom: 0;
+    padding-left: 1;
+    padding-top: 0;
+    padding-right: 0;
 }

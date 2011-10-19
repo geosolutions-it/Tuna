@@ -65,7 +65,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
             allowBlank : false,
             allowDecimals: false,
             allowNegative: false,
-            value: 512
+            value: 900
         });
         
         this.loop = new Ext.form.Checkbox({
@@ -152,6 +152,16 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
         }];
         
         this.buttons = [
+           new Ext.Button({
+                text: "Download Gif",
+                tooltip: "Download Gif",
+                iconCls: 'map-button-img',
+                scope: this,
+                handler: function(){ 
+                	alert('prova');
+
+                }
+            }),
             new Ext.Button({
                 text: "Animation",
                 tooltip: "Run the Animation",
@@ -366,6 +376,8 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
             })
         ];
         
+
+                
         this.items = [
             {
                 layout: 'column',

@@ -202,8 +202,8 @@ Ext.onReady( function() {
 			}
 
 	});
-	myMap.addControl(poweredByControl);  
-
+	myMap.addControl(poweredByControl);
+	
     //
     // build up all controls            
     //
@@ -221,8 +221,7 @@ Ext.onReady( function() {
        // //////////////////////
        // OL code
        // //////////////////////
-       if (!this.viewRequestID ||
-            (this.map && this.viewRequestID == this.map.viewRequestID)) { 
+       if (!this.viewRequestID || (this.map && this.viewRequestID == this.map.viewRequestID)) { 
             this.style.display = "";  
        }
         
@@ -231,7 +230,8 @@ Ext.onReady( function() {
        // //////////////////////
        // Tuna code
        // ////////////////////// 
-       if(tuna_map && !(activeTab instanceof AnimationPanel)){        
+       if(tuna_map && !(activeTab instanceof AnimationPanel)){
+               
             Ext.getCmp('quarter-slider').enable(); 
             Ext.getCmp('years-slider').enable();       
             
@@ -240,8 +240,9 @@ Ext.onReady( function() {
             Ext.getCmp("year-min-largestep").enable(); 
             Ext.getCmp("year-min-littlestep").enable(); 
             Ext.getCmp("year-max-littlestep").enable(); 
-            Ext.getCmp("year-max-largestep").enable();  
+            Ext.getCmp("year-max-largestep").enable();
        }
+
     };
     
     //
@@ -374,7 +375,7 @@ Ext.onReady( function() {
                         id : 'quarter-max-field',
                         xtype: 'textfield',
                         readOnly: true,
-                        width: 24,
+                        width: 22,
                         value: 'Q4'
                     },
                     new Ext.slider.MultiSlider({
@@ -405,7 +406,7 @@ Ext.onReady( function() {
                         id : 'quarter-min-field',
                         xtype: 'textfield',
                         readOnly: true,
-                        width: 24,
+                        width: 22,
                         value: 'Q1'
                     },
                     new Ext.Button({
@@ -738,10 +739,15 @@ Ext.onReady( function() {
                                               if(href.indexOf("#") != -1){
                                                   href = href.replace("#", "");
                                               }
+                                              
+                                              var layer1 = myMap.layers[1].visibility;
+                                              var layer2 = myMap.layers[2].visibility;
+                                              var layer3 = myMap.layers[3].visibility;
+                                              
                                           if(typeof(params)=="undefined"){
-                                          	var printBaseURL = href + 'print.html?' + getViewParams() + '&' + myMap.getExtent().left + '&' + myMap.getExtent().bottom + '&' + myMap.getExtent().right + '&' + myMap.getExtent().top + '&' + getViewParams() + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null'  ;
+                                          	var printBaseURL = href + 'print.html?' + getViewParams() + '&' + myMap.getExtent().left + '&' + myMap.getExtent().bottom + '&' + myMap.getExtent().right + '&' + myMap.getExtent().top + '&' + layer1 + '&' + layer2 + '&' + layer3 + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null'  ;
                                           }else{
-                                              var printBaseURL = href + 'print.html?' + getViewParams() + '&' + myMap.getExtent().left + '&' + myMap.getExtent().bottom + '&' + myMap.getExtent().right + '&' + myMap.getExtent().top + '&'  + params.BBOX + '&' + params.X + '&' + params.Y + '&' + params.WIDTH + '&' + params.HEIGHT + '&' + brkdwn_params.BBOX + '&' + brkdwn_params.X + '&' + brkdwn_params.Y + '&' + brkdwn_params.WIDTH + '&' + brkdwn_params.HEIGHT  ;
+                                              var printBaseURL = href + 'print.html?' + getViewParams() + '&' + myMap.getExtent().left + '&' + myMap.getExtent().bottom + '&' + myMap.getExtent().right + '&' + myMap.getExtent().top + '&' + layer1 + '&' + layer2 + '&' + layer3 + '&' + params.BBOX + '&' + params.X + '&' + params.Y + '&' + params.WIDTH + '&' + params.HEIGHT + '&' + brkdwn_params.BBOX + '&' + brkdwn_params.X + '&' + brkdwn_params.Y + '&' + brkdwn_params.WIDTH + '&' + brkdwn_params.HEIGHT  ;
                                               }
                                               
                                               window.open(printBaseURL);
@@ -796,7 +802,7 @@ Ext.onReady( function() {
                           },
                           {
                               xtype: 'panel',
-                              height: 300,
+                              height: 273,
                               //width: 730,
                               autoScroll: true,
                               html : [
@@ -854,7 +860,7 @@ Ext.onReady( function() {
                border:false,
                html: [
                   '<table class="reftopmenu" cellpadding="0" cellspacing="0">',
-                  '<tr valign="middle" align="left"><td>',
+                  '<tr style="margin-top:0px;" valign="middle" align="left"><td>',
                   '<br>',
                   '<b>Format of the code identifying statistical cells</b>',
                   '<br>',
@@ -1060,7 +1066,6 @@ Ext.onReady( function() {
                 selectedGears.push(selection);
             }
         }
-        /*#219914*/
         Ext.getCmp('print-button').disable();
     });
 
@@ -1147,6 +1152,7 @@ Ext.onReady( function() {
     };
       
     function issueUpdate(){
+    	
         Ext.getCmp('quarter-slider').disable(); 
         Ext.getCmp('years-slider').disable();
         
@@ -1156,6 +1162,7 @@ Ext.onReady( function() {
         Ext.getCmp("year-min-littlestep").disable(); 
         Ext.getCmp("year-max-littlestep").disable(); 
         Ext.getCmp("year-max-largestep").disable(); 
+
           
         tuna_map.mergeNewParams({'viewparams':getViewParams()});
         
