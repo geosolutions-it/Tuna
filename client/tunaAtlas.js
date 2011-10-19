@@ -241,6 +241,8 @@ Ext.onReady( function() {
             Ext.getCmp("year-min-littlestep").enable(); 
             Ext.getCmp("year-max-littlestep").enable(); 
             Ext.getCmp("year-max-largestep").enable();
+            Ext.getCmp("last-year").enable(); 
+            Ext.getCmp("first-year").enable(); 
        }
 
     };
@@ -663,7 +665,10 @@ Ext.onReady( function() {
                           Ext.getCmp("year-min-largestep").disable(); 
                           Ext.getCmp("year-min-littlestep").disable(); 
                           Ext.getCmp("year-max-littlestep").disable(); 
-                          Ext.getCmp("year-max-largestep").disable(); 
+                          Ext.getCmp("year-max-largestep").disable();
+                         
+                          Ext.getCmp("last-year").disable(); 
+                          Ext.getCmp("first-year").disable();                             
                       }else{
                       
                           //
@@ -677,7 +682,9 @@ Ext.onReady( function() {
                           Ext.getCmp("year-min-largestep").enable(); 
                           Ext.getCmp("year-min-littlestep").enable(); 
                           Ext.getCmp("year-max-littlestep").enable(); 
-                          Ext.getCmp("year-max-largestep").enable();  
+                          Ext.getCmp("year-max-largestep").enable();
+                          Ext.getCmp("last-year").enable(); 
+                          Ext.getCmp("first-year").enable();                              
                       }
                       
                       activeTab = panel.items.first();
@@ -1161,7 +1168,9 @@ Ext.onReady( function() {
         Ext.getCmp("year-min-largestep").disable(); 
         Ext.getCmp("year-min-littlestep").disable(); 
         Ext.getCmp("year-max-littlestep").disable(); 
-        Ext.getCmp("year-max-largestep").disable(); 
+        Ext.getCmp("year-max-largestep").disable();
+        Ext.getCmp("last-year").disable(); 
+        Ext.getCmp("first-year").disable();  
 
           
         tuna_map.mergeNewParams({'viewparams':getViewParams()});
