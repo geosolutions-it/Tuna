@@ -271,8 +271,9 @@ select{
     top: 5px;
     right: 0px;
 }
+
 .olControlMousePosition {
-    bottom: 3;
+    bottom: 0.4em;
     display: block;
     font-family: Arial;
     font-size: 11;

@@ -213,7 +213,7 @@ Ext.onReady( function() {
     myMap.addControl(new OpenLayers.Control.Navigation());
     myMap.addControl(new OpenLayers.Control.ScaleLine());
     myMap.addControl(new OpenLayers.Control.MousePosition());
-    myMap.addControl(new OpenLayers.Control.LayerSwitcher());	
+    myMap.addControl(new OpenLayers.Control.LayerSwitcher());
 	
     myMap.zoomToMaxExtent();
     
@@ -287,7 +287,7 @@ Ext.onReady( function() {
             {
               xtype: 'panel',
               id: 'info-panel',
-              header: false, 
+              header: false,
               autoScroll: true,
               collapsible: true,
               collapsed: true,
@@ -369,7 +369,6 @@ Ext.onReady( function() {
                             
                             if (validateSelection()) {
                               issueUpdate();
-                              Ext.getCmp('info-panel').expand();
                             }
                         }
                     }),
@@ -396,7 +395,6 @@ Ext.onReady( function() {
                           changecomplete : function (){
                             if (validateSelection()) {
                               issueUpdate();
-                              Ext.getCmp('info-panel').expand();
                             }
                             
                             Ext.getCmp('quarter-min-field').setValue('Q' + this.getValues()[0]);
@@ -429,7 +427,6 @@ Ext.onReady( function() {
                             
                             if (validateSelection()) {
                               issueUpdate();
-                              Ext.getCmp('info-panel').expand();
                             }
                         }
                     })
@@ -463,7 +460,6 @@ Ext.onReady( function() {
                             
                             if (validateSelection()) {
                               issueUpdate();
-                              Ext.getCmp('info-panel').expand();
                             }
                         }
                     }),
@@ -485,7 +481,6 @@ Ext.onReady( function() {
                             
                             if (validateSelection()) {
                               issueUpdate();
-                              Ext.getCmp('info-panel').expand();
                             }
                         }
                     }),
@@ -507,7 +502,6 @@ Ext.onReady( function() {
                             
                             if (validateSelection()) {
                               issueUpdate();
-                              Ext.getCmp('info-panel').expand();
                             }
                         }
                     }), 
@@ -535,7 +529,6 @@ Ext.onReady( function() {
                             changecomplete : function (){
                                 if (validateSelection()) {
                                   issueUpdate();
-                                  Ext.getCmp('info-panel').expand();
                                 }
                                 Ext.getCmp('years-min-field').setValue(this.getValues()[0]);
                                 Ext.getCmp('years-max-field').setValue(this.getValues()[1]);
@@ -567,7 +560,6 @@ Ext.onReady( function() {
                             
                             if (validateSelection()) {
                               issueUpdate();
-                              Ext.getCmp('info-panel').expand();
                             }
                         }
                     }),				
@@ -589,7 +581,6 @@ Ext.onReady( function() {
                             
                             if (validateSelection()) {
                               issueUpdate();
-                              Ext.getCmp('info-panel').expand();
                             }
                         }
                     }),
@@ -612,7 +603,6 @@ Ext.onReady( function() {
                             
                             if (validateSelection()) {
                               issueUpdate();
-                              Ext.getCmp('info-panel').expand();
                             }
                         }
                     })
@@ -711,8 +701,7 @@ Ext.onReady( function() {
                                       iconCls: 'map-button-img',
                                       handler: function(){                                              
                                           if (validateMap()) {
-                                            issueUpdate();
-                                            Ext.getCmp('info-panel').expand(); 
+                                            issueUpdate();	
                                           }else{
                                               if(selectedSpecies.length < 1){
                                                   document.getElementById('species').value = -1;
@@ -1171,7 +1160,6 @@ Ext.onReady( function() {
         Ext.getCmp("year-max-largestep").disable();
         Ext.getCmp("last-year").disable(); 
         Ext.getCmp("first-year").disable();  
-
           
         tuna_map.mergeNewParams({'viewparams':getViewParams()});
         
@@ -1228,13 +1216,15 @@ Ext.onReady( function() {
         document.getElementById('tabtitle').innerHTML = statistic;
         
         Ext.getCmp('print-button').enable();
-        
+
         //
         // Showing Map informations panel
         //
-        //var infoPanel = Ext.getCmp('info-panel');
-        //if(infoPanel.collapsed)
-        //    infoPanel.expand();                    
+        var infoPanel = Ext.getCmp('info-panel');
+        var mainPanel = Ext.getCmp('main-panel');
+        if(infoPanel.collapsed)
+            infoPanel.expand();
+            mainPanel.syncSize();
     }
 });
 
