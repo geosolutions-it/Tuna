@@ -9,6 +9,7 @@ var param_filter;
 var tuna_map;
 var top_continent;
 var inputParameters;
+var nav;
 
 var params;
 var brkdwn_params;
@@ -207,16 +208,17 @@ Ext.onReady( function() {
     //
     // build up all controls            
     //
+    nav = new OpenLayers.Control.Navigation({'zoomBoxEnabled':true});
     myMap.addControl(new OpenLayers.Control.LoadingPanel());		
     myMap.addControl(new OpenLayers.Control.ZoomPanel());
     myMap.addControl(new OpenLayers.Control.PanPanel());
-    myMap.addControl(new OpenLayers.Control.Navigation());
+    myMap.addControl(nav);
     myMap.addControl(new OpenLayers.Control.ScaleLine());
     myMap.addControl(new OpenLayers.Control.MousePosition());
     myMap.addControl(new OpenLayers.Control.LayerSwitcher());
 	
     myMap.zoomToMaxExtent();
-    
+
     OpenLayers.Util.onImageLoad = function(){
        // //////////////////////
        // OL code
@@ -334,6 +336,7 @@ Ext.onReady( function() {
               ].join('')
             },
             new GeoExt.MapPanel({
+                id: "gxmappanel",
                 stateId: "mappanel",
                 height: 350,
                 width: 700,
@@ -368,7 +371,8 @@ Ext.onReady( function() {
                             Ext.getCmp('quarter-max-field').setValue('Q' + quarters.getValues()[1]);
                             
                             if (validateSelection()) {
-                              issueUpdate();
+				expandPan();					
+				issueUpdate();
                             }
                         }
                     }),
@@ -394,7 +398,8 @@ Ext.onReady( function() {
                         listeners: {
                           changecomplete : function (){
                             if (validateSelection()) {
-                              issueUpdate();
+				expandPan();					
+				issueUpdate();
                             }
                             
                             Ext.getCmp('quarter-min-field').setValue('Q' + this.getValues()[0]);
@@ -426,7 +431,8 @@ Ext.onReady( function() {
                             Ext.getCmp('quarter-max-field').setValue('Q' + quarters.getValues()[1]);
                             
                             if (validateSelection()) {
-                              issueUpdate();
+				expandPan();					
+				issueUpdate();
                             }
                         }
                     })
@@ -459,7 +465,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-min-field').setValue('1950');
                             
                             if (validateSelection()) {
-                              issueUpdate();
+				expandPan();					
+				issueUpdate();
                             }
                         }
                     }),
@@ -480,7 +487,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-                              issueUpdate();
+				expandPan();					
+				issueUpdate();
                             }
                         }
                     }),
@@ -501,7 +509,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-                              issueUpdate();
+				expandPan();					
+				issueUpdate();
                             }
                         }
                     }), 
@@ -528,7 +537,8 @@ Ext.onReady( function() {
                         listeners: {
                             changecomplete : function (){
                                 if (validateSelection()) {
-                                  issueUpdate();
+                                	expandPan();
+                                        issueUpdate();
                                 }
                                 Ext.getCmp('years-min-field').setValue(this.getValues()[0]);
                                 Ext.getCmp('years-max-field').setValue(this.getValues()[1]);
@@ -559,7 +569,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-                              issueUpdate();
+				expandPan();					
+				issueUpdate();
                             }
                         }
                     }),				
@@ -580,7 +591,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-                              issueUpdate();
+				expandPan();					
+				issueUpdate();
                             }
                         }
                     }),
@@ -602,7 +614,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(new Date().getFullYear());
                             
                             if (validateSelection()) {
-                              issueUpdate();
+				expandPan();					
+				issueUpdate();
                             }
                         }
                     })
@@ -610,6 +623,7 @@ Ext.onReady( function() {
             },
             {
                xtype: 'tabpanel',
+               id: 'tab-panel',
                width: 730,
                height: 500,
                colspan : 2,
@@ -701,7 +715,8 @@ Ext.onReady( function() {
                                       iconCls: 'map-button-img',
                                       handler: function(){                                              
                                           if (validateMap()) {
-                                            issueUpdate();	
+						expandPan();					
+                                                issueUpdate();
                                           }else{
                                               if(selectedSpecies.length < 1){
                                                   document.getElementById('species').value = -1;
@@ -751,31 +766,31 @@ Ext.onReady( function() {
                                       }
                                   })
                               ],
-                              html : ['<table  class="gfi" border="0" cellpadding="0" cellspacing="0" style="width:700px;">',
+                              html : ['<table  class="gfi" border="0" cellpadding="0" cellspacing="0" style="width:650px;">',
 							  
 							    '<tr>',
 							  '<td colspan="4"><b>Select</b></td>',
 							  '<td><b>Aggregation method</b></td>',
 							  '</tr>',
                                 '<tr>',
-                                '<td style="width:200px; vertical-align:top;"> ',
+                                '<td style="width:70px; vertical-align:top;"> ',
                                 '<select id="gearType">',
                                 '<option value="-1">Gear Types</option>',
                                 '</select>',
                                 '</td>',
-                                '<td style="width:20px;">',
+                                '<td style="width:20px; vertical-align:top;">',
                                 '<div id="gearslist"></div>',
                                 '</td>',
-                                '<td style="width:210px; vertical-align:top;">',
+                                '<td style="width:70px; vertical-align:top;">',
                                 '<select id="species">',
                                 '<option value="-1">Species</option>',
                                 '</select>',
                                 '</td>',
-                                '<td style="width:20px;">',
+                                '<td style="width:20px; vertical-align:top;">',
                                 '<div id="specieslist"></div>',
                                 '</td>',
-                                  '<td style="width:200px;">',
-								  '<input type="radio" name="statistics" id="sum" checked="checked" /><label for="sum">Sum across years</label> <br />',
+                                  '<td >',
+				'<input type="radio" name="statistics" id="sum" checked="checked" /><label for="sum">Sum across years</label> <br />',
                                 '<input type="radio" name="statistics" id="avg" /><label for="avg">Average across years</label> <br />',
 								'</td>',
 								  '</tr>',
@@ -787,7 +802,7 @@ Ext.onReady( function() {
                                 '<td style="vertical-align:top;">',
                                 '</td>',
                                 '<td style="vertical-align:top;">',
-                                '<div id="selectedSpecies"></div>',
+                                '<div id="selectedSpecies" ></div>',
                                 '</td>',
 								 '<td>&#160;</td>',
                                  '<td style="vertical-align:top; align:center;">',
@@ -851,6 +866,8 @@ Ext.onReady( function() {
                  }
                ]
            }, {
+               xtype: 'panel',
+               id: 'last-tab',	
                width: 730,
                colspan : 2,
                border:false,
@@ -1045,7 +1062,7 @@ Ext.onReady( function() {
             if (selection != '') {
                 if (selection.length > 15) selection = selection.substring(0, 15) + "...";
                 $("<div >" + 
-                    "<table style='background-color:#CEDFF5; border:1px solid #15428B; margin-top:5px; font-size:12px;' cellpadding='0' cellspacing='0' width='87%'>" +
+                    "<table style='background-color:#CEDFF5; border:1px solid #15428B; margin-top:5px; font-size:12px;' cellpadding='0' cellspacing='0' width='100%'>" +
                 	"<tr>" +
                 	    "<td>" + 
                 		"<span style='color:#15428B; font-weight:bold; margin-left:5px;' value='" + $(this).val() + "'>" + selection + "</span>" + 
@@ -1074,7 +1091,7 @@ Ext.onReady( function() {
             if (selection != '') {
                 if (selection.length > 15) selection = selection.substring(0, 15) + "...";
                 $("<div>" + 
-                    "<table style='background-color:#CEDFF5; border:1px solid #15428B; margin-top:5px; font-size:12px;' cellpadding='0' cellspacing='0' width='83%'>" +
+                    "<table style='background-color:#CEDFF5; border:1px solid #15428B; margin-top:5px; font-size:12px;' cellpadding='0' cellspacing='0' width='100%'>" +
                 	"<tr>" +
                 	    "<td>" + 
                 		"<span style='color:#15428B; font-weight:bold; margin-left:5px;' value='" + $(this).val() + "'>" + selection + "</span>" + 
@@ -1216,16 +1233,25 @@ Ext.onReady( function() {
         document.getElementById('tabtitle').innerHTML = statistic;
         
         Ext.getCmp('print-button').enable();
+    }    
 
-        //
-        // Showing Map informations panel
-        //
-        var infoPanel = Ext.getCmp('info-panel');
-        var mainPanel = Ext.getCmp('main-panel');
-        if(infoPanel.collapsed)
-            infoPanel.expand();
-            mainPanel.syncSize();
-    }
+	function expandPan(){
+		var infoPanel = Ext.getCmp('info-panel');
+		var mainPanel = Ext.getCmp('main-panel');
+		var controlPanel = Ext.getCmp('controls-panel');
+		var tabpanel = Ext.getCmp('tab-panel');
+		var lasttab = Ext.getCmp('last-tab');
+
+		  if(infoPanel.collapsed)
+		    infoPanel.expand();
+		if(Ext.isIE7){
+		    mainPanel.syncSize();
+		}else{
+		    controlPanel.syncSize();
+		    tabpanel.syncSize();
+		    lasttab.syncSize();
+		}
+	}
 });
 
 function validateMap() {
@@ -1263,7 +1289,7 @@ function validateMap() {
            icon: Ext.MessageBox.WARNING
         });
         
-        return false;
+        return false;myMap = new OpenLayers.Map('map', options);
     }
   
     return true;
