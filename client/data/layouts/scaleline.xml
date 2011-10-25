@@ -1,7 +1,6 @@
 
 <layout>
-    <decoration type="scaleline" affinity="bottom,left" offset="6,36">
+    <decoration type="scaleline" affinity="bottom,left" size="100,100" offset="6,36">
     	<option name="fontsize" value="12"/>
-    </decoration>	
-        
+    </decoration>	        
 </layout>
