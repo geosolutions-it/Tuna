@@ -371,8 +371,8 @@ Ext.onReady( function() {
                             Ext.getCmp('quarter-max-field').setValue('Q' + quarters.getValues()[1]);
                             
                             if (validateSelection()) {
-				expandPan();					
-				issueUpdate();
+                                expandPan();					
+                                issueUpdate();
                             }
                         }
                     }),
@@ -398,8 +398,8 @@ Ext.onReady( function() {
                         listeners: {
                           changecomplete : function (){
                             if (validateSelection()) {
-				expandPan();					
-				issueUpdate();
+                                expandPan();					
+                                issueUpdate();
                             }
                             
                             Ext.getCmp('quarter-min-field').setValue('Q' + this.getValues()[0]);
@@ -431,8 +431,8 @@ Ext.onReady( function() {
                             Ext.getCmp('quarter-max-field').setValue('Q' + quarters.getValues()[1]);
                             
                             if (validateSelection()) {
-				expandPan();					
-				issueUpdate();
+                                  expandPan();					
+                                  issueUpdate();
                             }
                         }
                     })
@@ -465,8 +465,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-min-field').setValue('1950');
                             
                             if (validateSelection()) {
-				expandPan();					
-				issueUpdate();
+                                    expandPan();					
+                                    issueUpdate();
                             }
                         }
                     }),
@@ -487,8 +487,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-				expandPan();					
-				issueUpdate();
+                                expandPan();					
+                                issueUpdate();
                             }
                         }
                     }),
@@ -509,8 +509,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-				expandPan();					
-				issueUpdate();
+                                  expandPan();					
+                                  issueUpdate();
                             }
                         }
                     }), 
@@ -569,8 +569,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-				expandPan();					
-				issueUpdate();
+                                expandPan();					
+                                issueUpdate();
                             }
                         }
                     }),				
@@ -591,8 +591,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-				expandPan();					
-				issueUpdate();
+                                expandPan();					
+                                issueUpdate();
                             }
                         }
                     }),
@@ -614,8 +614,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(new Date().getFullYear());
                             
                             if (validateSelection()) {
-				expandPan();					
-				issueUpdate();
+                                expandPan();					
+                                issueUpdate();
                             }
                         }
                     })
@@ -715,7 +715,7 @@ Ext.onReady( function() {
                                       iconCls: 'map-button-img',
                                       handler: function(){                                              
                                           if (validateMap()) {
-						expandPan();					
+                                                expandPan();					
                                                 issueUpdate();
                                           }else{
                                               if(selectedSpecies.length < 1){
@@ -1242,7 +1242,7 @@ Ext.onReady( function() {
 		var tabpanel = Ext.getCmp('tab-panel');
 		var lasttab = Ext.getCmp('last-tab');
 
-		  if(infoPanel.collapsed)
+		if(infoPanel.collapsed)
 		    infoPanel.expand();
 		if(Ext.isIE7){
 		    mainPanel.syncSize();

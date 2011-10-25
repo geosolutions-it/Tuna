@@ -160,35 +160,36 @@
 				
 				<br/>
 				
-        <table class="reftopmenu" border="0" cellpadding="2" cellspacing="2" width="100%"><tbody>
+        <table class="reftopmenu" border="0" cellpadding="2" cellspacing="2">
+        <tbody>
         <tr>
         <td align="left" nowrap="nowrap" width="5%"><b>Map Title:</b>
         </td>
-        <td id="tabtitle" align="left" width="95%">
+        <td id="tabtitle" align="left">
         </td>
         </tr>
         <tr>
-        <td align="left" width="5%"><b>Species:</b>
+        <td align="left"><b>Species:</b>
         </td>
-        <td id="tabspecies" align="left" width="95%">
-        </td>
-        </tr>
-        <tr>
-        <td align="left" width="5%"><b>Gears:</b>
-        </td>
-        <td id="tabgears" align="left" width="95%">
+        <td id="tabspecies" align="left">
         </td>
         </tr>
         <tr>
-        <td align="left" width="5%"><b>Periods:</b>
+        <td align="left"><b>Gears:</b>
         </td>
-        <td id="tabperiod" align="left" width="95%">						
+        <td id="tabgears" align="left">
         </td>
         </tr>
         <tr>
-        <td align="left" width="5%"><b>Quarters:</b>
+        <td align="left"><b>Periods:</b>
         </td>
-        <td id="tabquarters" align="left" width="95%">						
+        <td id="tabperiod" align="left">						
+        </td>
+        </tr>
+        <tr>
+        <td align="left"><b>Quarters:</b>
+        </td>
+        <td id="tabquarters" align="left">						
         </td>
         </tr>
         <tr>
@@ -360,9 +361,9 @@
                 	var table4 = document.getElementById("Info tables");
                 	table1.innerHTML = "";
                 	table2.innerHTML = "";  
-			table3.innerHTML = "";	  
-			table4.innerHTML = "";
-			printButton.enable();			
+                  table3.innerHTML = "";	  
+                  table4.innerHTML = "";
+                  printButton.enable();			
                 }else {
 		        var infoDivParams = document.getElementById('infoTunaAtlasParams');
 		        var textParams = Tuna.vars.geoserverURL + '/ows?' + 'SERVICE=WMS&REQUEST=GetFeatureInfo&EXCEPTIONS=application/vnd.ogc.se_xml&BBOX=' + bboxParams + '&X=' + xParams + '&Y=' + yParams + '&INFO_FORMAT=text/html&QUERY_LAYERS=fifao:TUNA_YEARLY_CATCHES&FEATURE_COUNT=50&Layers=fifao:TUNA_YEARLY_CATCHES&Styles=polygon&Srs=EPSG:4326&WIDTH=' + widthParams + '&HEIGHT=' + heightParams + '&format=image/png&viewparams=' + viewParams + '&source=' + inputParameters;
@@ -413,7 +414,25 @@
                     }else if(parameters[i].indexOf('FIC_ITEM') != -1){
                         species = parameters[i].split(':')[1].split('\\,');
                     }else if(parameters[i].indexOf('YR_TA') != -1){
-                        periods = parameters[i].split(':')[1].replace(/\\,/g,',');
+                        periods = parameters[i].split(':')[1].replace(/\\,/g,',').split(',');
+                        
+                        var q = '';
+                        var j = 0;
+                        for(var k=0; k<periods.length; k++){
+                            if(j == 23){
+                                j = 0;
+                                q += '<br>';
+                            }else{
+                                q += periods[k];
+                                
+                                if(k + 1 != periods.length)
+                                    q += ","
+                            }
+                              
+                            j++;
+                        }
+
+                        periods = q;
                     }else if(parameters[i].indexOf('QTR_TA') != -1){
                         quarters = parameters[i].split(':')[1].replace(/\\,/g,',');
                     }else if(parameters[i].indexOf('OP') != -1){
