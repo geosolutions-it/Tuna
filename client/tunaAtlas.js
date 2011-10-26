@@ -10,7 +10,8 @@ var tuna_map;
 var top_continent;
 var inputParameters;
 var nav;
-
+var mouseMove;
+var update_tuna;
 var params;
 var brkdwn_params;
 
@@ -23,9 +24,10 @@ var activeTab;
 OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
 // make OL compute scale according to WMS spec
 OpenLayers.DOTS_PER_INCH = 25.4 / 0.28;
-
+//map.events.element.offsets = null;
+//myMap.events.clearMouseCache(); //for 2.7
 Ext.onReady( function() {
-
+            
     OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
         defaultHandlerOptions: {
             'single': true,
@@ -118,8 +120,8 @@ Ext.onReady( function() {
         units: 'degrees'        
     };
 	
-	  myMap = new OpenLayers.Map('map', options);
-
+	  myMap = new OpenLayers.Map('gxmappanel', options);
+	  
     fao_areas = new OpenLayers.Layer.WMS("FAO Fishing Areas", Tuna.vars.wms,
         {
             layers: 'fifao:FAO_MAJOR,fifao:UN_CONTINENT',
@@ -208,13 +210,14 @@ Ext.onReady( function() {
     //
     // build up all controls            
     //
-    nav = new OpenLayers.Control.Navigation({'zoomBoxEnabled':true});
+    nav = new OpenLayers.Control.Navigation({zoomBoxEnabled:true, documentDrag: true});
     myMap.addControl(new OpenLayers.Control.LoadingPanel());		
     myMap.addControl(new OpenLayers.Control.ZoomPanel());
     myMap.addControl(new OpenLayers.Control.PanPanel());
     myMap.addControl(nav);
     myMap.addControl(new OpenLayers.Control.ScaleLine());
-    myMap.addControl(new OpenLayers.Control.MousePosition());
+    var mouseMove = new OpenLayers.Control.MousePosition();
+    myMap.addControl(mouseMove);
     myMap.addControl(new OpenLayers.Control.LayerSwitcher());
 	
     myMap.zoomToMaxExtent();
@@ -293,6 +296,7 @@ Ext.onReady( function() {
               autoScroll: true,
               collapsible: true,
               collapsed: true,
+              forceLayout: true,
               width: 730,
               colspan : 2,
               border: true,
@@ -338,6 +342,7 @@ Ext.onReady( function() {
             new GeoExt.MapPanel({
                 id: "gxmappanel",
                 stateId: "mappanel",
+                renderTo: '',
                 height: 350,
                 width: 700,
                 map: myMap,
@@ -371,8 +376,8 @@ Ext.onReady( function() {
                             Ext.getCmp('quarter-max-field').setValue('Q' + quarters.getValues()[1]);
                             
                             if (validateSelection()) {
-                                expandPan();					
-                                issueUpdate();
+				expandPan();					
+				//issueUpdate();
                             }
                         }
                     }),
@@ -398,8 +403,9 @@ Ext.onReady( function() {
                         listeners: {
                           changecomplete : function (){
                             if (validateSelection()) {
-                                expandPan();					
-                                issueUpdate();
+				expandPan();
+				
+				//issueUpdate();
                             }
                             
                             Ext.getCmp('quarter-min-field').setValue('Q' + this.getValues()[0]);
@@ -431,8 +437,8 @@ Ext.onReady( function() {
                             Ext.getCmp('quarter-max-field').setValue('Q' + quarters.getValues()[1]);
                             
                             if (validateSelection()) {
-                                  expandPan();					
-                                  issueUpdate();
+				expandPan();					
+				//issueUpdate();
                             }
                         }
                     })
@@ -465,8 +471,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-min-field').setValue('1950');
                             
                             if (validateSelection()) {
-                                    expandPan();					
-                                    issueUpdate();
+				expandPan();					
+				//issueUpdate();
                             }
                         }
                     }),
@@ -487,8 +493,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-                                expandPan();					
-                                issueUpdate();
+				expandPan();					
+				//issueUpdate();
                             }
                         }
                     }),
@@ -509,8 +515,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-                                  expandPan();					
-                                  issueUpdate();
+				expandPan();					
+				//issueUpdate();
                             }
                         }
                     }), 
@@ -537,8 +543,10 @@ Ext.onReady( function() {
                         listeners: {
                             changecomplete : function (){
                                 if (validateSelection()) {
+                                        //myMap.events.idle = true;
                                 	expandPan();
-                                        issueUpdate();
+                                	//myMap.events.idle = false;
+                                        //issueUpdate();
                                 }
                                 Ext.getCmp('years-min-field').setValue(this.getValues()[0]);
                                 Ext.getCmp('years-max-field').setValue(this.getValues()[1]);
@@ -569,8 +577,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-                                expandPan();					
-                                issueUpdate();
+				expandPan();					
+				//issueUpdate();
                             }
                         }
                     }),				
@@ -591,8 +599,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-                                expandPan();					
-                                issueUpdate();
+				expandPan();					
+				//issueUpdate();
                             }
                         }
                     }),
@@ -614,8 +622,8 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(new Date().getFullYear());
                             
                             if (validateSelection()) {
-                                expandPan();					
-                                issueUpdate();
+				expandPan();					
+				//issueUpdate();
                             }
                         }
                     })
@@ -715,8 +723,8 @@ Ext.onReady( function() {
                                       iconCls: 'map-button-img',
                                       handler: function(){                                              
                                           if (validateMap()) {
-                                                expandPan();					
-                                                issueUpdate();
+						expandPan();
+						
                                           }else{
                                               if(selectedSpecies.length < 1){
                                                   document.getElementById('species').value = -1;
@@ -755,8 +763,8 @@ Ext.onReady( function() {
                                               var layer2 = myMap.layers[2].visibility;
                                               var layer3 = myMap.layers[3].visibility;
                                               
-                                          if(typeof(params)=="undefined"){
-                                          	var printBaseURL = href + 'print.html?' + getViewParams() + '&' + myMap.getExtent().left + '&' + myMap.getExtent().bottom + '&' + myMap.getExtent().right + '&' + myMap.getExtent().top + '&' + layer1 + '&' + layer2 + '&' + layer3 + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null' + '&' + 'null'  ;
+                                          if(params === undefined){
+                                          	var printBaseURL = href + 'print.html?' + getViewParams() + '&' + myMap.getExtent().left + '&' + myMap.getExtent().bottom + '&' + myMap.getExtent().right + '&' + myMap.getExtent().top + '&' + layer1 + '&' + layer2 + '&' + layer3 ;
                                           }else{
                                               var printBaseURL = href + 'print.html?' + getViewParams() + '&' + myMap.getExtent().left + '&' + myMap.getExtent().bottom + '&' + myMap.getExtent().right + '&' + myMap.getExtent().top + '&' + layer1 + '&' + layer2 + '&' + layer3 + '&' + params.BBOX + '&' + params.X + '&' + params.Y + '&' + params.WIDTH + '&' + params.HEIGHT + '&' + brkdwn_params.BBOX + '&' + brkdwn_params.X + '&' + brkdwn_params.Y + '&' + brkdwn_params.WIDTH + '&' + brkdwn_params.HEIGHT  ;
                                               }
@@ -1179,7 +1187,7 @@ Ext.onReady( function() {
         Ext.getCmp("first-year").disable();  
           
         tuna_map.mergeNewParams({'viewparams':getViewParams()});
-        
+
         var legendParams = [
           "REQUEST=GetLegendGraphic",
           "LAYER=fifao:TUNA_YEARLY_CATCHES",
@@ -1195,8 +1203,8 @@ Ext.onReady( function() {
         document.getElementById('nodelist').innerHTML = '';
         document.getElementById('brkdwn_nodelist').innerHTML = '';
         	
-        params = "null";
-        brkdwn_params = "null";
+        //params = "null";
+        //brkdwn_params = "null";
         
         //
         // Filling map information table 
@@ -1236,12 +1244,27 @@ Ext.onReady( function() {
     }    
 
 	function expandPan(){
+/*
+		var elem = Ext.get('years-slider').dom;
+
+		OpenLayers.Event.observe(elem, "click", block);
+		OpenLayers.Event.observe(elem, "mousedown", block);
+		OpenLayers.Event.observe(elem, "mousemove", block);
+		OpenLayers.Event.observe(elem, "mouseup", block);
+		OpenLayers.Event.observe(elem, "mouseover", block);
+		OpenLayers.Event.observe(elem, "mouseout", block); 
+		
+		function block(evt) {
+		     OpenLayers.Event.stop(evt);
+		}
+*/
 		var infoPanel = Ext.getCmp('info-panel');
 		var mainPanel = Ext.getCmp('main-panel');
 		var controlPanel = Ext.getCmp('controls-panel');
 		var tabpanel = Ext.getCmp('tab-panel');
 		var lasttab = Ext.getCmp('last-tab');
-
+		var panelMap = Ext.getCmp('gxmappanel');
+                
 		if(infoPanel.collapsed)
 		    infoPanel.expand();
 		if(Ext.isIE7){
@@ -1251,8 +1274,11 @@ Ext.onReady( function() {
 		    tabpanel.syncSize();
 		    lasttab.syncSize();
 		}
+		
+		issueUpdate();		
 	}
 });
+
 
 function validateMap() {
     if ($('#avg')[0].checked) {
@@ -1284,7 +1310,7 @@ function validateMap() {
     if ((selectedGears.length < 1) || (selectedSpecies.length < 1)) {
         Ext.Msg.show({
            title: "Map Draw",
-           msg: "Please select at least one Gear Type and one Species",
+           msg: "Please select atgxmappanel least one Gear Type and one Species",
            buttons: Ext.Msg.OK,
            icon: Ext.MessageBox.WARNING
         });
