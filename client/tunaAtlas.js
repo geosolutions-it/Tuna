@@ -300,6 +300,11 @@ Ext.onReady( function() {
               width: 730,
               colspan : 2,
               border: true,
+              listeners: {
+                 expand: function(p){
+                    myMap.updateSize();
+                 }
+              },
               html: [
                   '<table class="reftopmenu" border="0" cellpadding="2" cellspacing="2" width="100%"><tbody>',
                   '<tr>',
