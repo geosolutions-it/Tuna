@@ -1315,7 +1315,7 @@ function validateMap() {
     if ((selectedGears.length < 1) || (selectedSpecies.length < 1)) {
         Ext.Msg.show({
            title: "Map Draw",
-           msg: "Please select atgxmappanel least one Gear Type and one Species",
+           msg: "Please select at least one Gear Type and one Species",
            buttons: Ext.Msg.OK,
            icon: Ext.MessageBox.WARNING
         });
