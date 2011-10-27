@@ -413,7 +413,25 @@
                     }else if(parameters[i].indexOf('FIC_ITEM') != -1){
                         species = parameters[i].split(':')[1].split('\\,');
                     }else if(parameters[i].indexOf('YR_TA') != -1){
-                        periods = parameters[i].split(':')[1].replace(/\\,/g,',');
+                        periods = parameters[i].split(':')[1].replace(/\\,/g,',').split(',');
+                        
+                        var q = '';
+                        var j = 0;
+                        for(var k=0; k<periods.length; k++){
+                            if(j == 23){
+                                j = 0;
+                                q += '<br>';
+                            }else{
+                                q += periods[k];
+                                
+                                if(k + 1 != periods.length)
+                                    q += ","
+                            }
+                              
+                            j++;
+                        }
+
+                        periods = q;
                     }else if(parameters[i].indexOf('QTR_TA') != -1){
                         quarters = parameters[i].split(':')[1].replace(/\\,/g,',');
                     }else if(parameters[i].indexOf('OP') != -1){

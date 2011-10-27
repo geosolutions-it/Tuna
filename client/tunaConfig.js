@@ -20,4 +20,3 @@ Tuna.speciesURL = Tuna.restBase + "/figis/figis-tuna/rest/tuna/species";
 Tuna.gearsURL = Tuna.restBase + "/figis/figis-tuna/rest/tuna/gears";
 Tuna.yearsURL = Tuna.restBase + "/figis/figis-tuna/rest/tuna/years";
 Tuna.animationsURL = Tuna.restBase + "/figis/geoserver/wms/animate?";
-
