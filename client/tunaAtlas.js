@@ -24,8 +24,7 @@ var activeTab;
 OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
 // make OL compute scale according to WMS spec
 OpenLayers.DOTS_PER_INCH = 25.4 / 0.28;
-//map.events.element.offsets = null;
-//myMap.events.clearMouseCache(); //for 2.7
+
 Ext.onReady( function() {
             
     OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
@@ -122,10 +121,10 @@ Ext.onReady( function() {
 	
 	  myMap = new OpenLayers.Map('gxmappanel', options);
 	  
-    fao_areas = new OpenLayers.Layer.WMS("FAO Fishing Areas", Tuna.vars.wms,
+    fao_areas = new OpenLayers.Layer.WMS("FAO Fishing Areas", Tuna.vars.gwc,
         {
-            layers: 'fifao:FAO_MAJOR,fifao:UN_CONTINENT',
-            format: OpenLayers.Util.alphaHack() ? "image/gif" : "image/png",
+            layers: 'fifao:FISHING_AREAS',
+            format: OpenLayers.Util.alphaHack() ? "image/gif" : "image/jpeg",
             tiled: 'true',
             tilesOrigin : "-180.0,-90.0",
             transparent: true
@@ -196,16 +195,17 @@ Ext.onReady( function() {
         myMap.addLayers([top_continent, world_grid, tuna_map, fao_areas]);
     }
     
-	var poweredByControl = new OpenLayers.Control();
-	OpenLayers.Util.extend(poweredByControl, {
-			draw: function () {
-				OpenLayers.Control.prototype.draw.apply(this, arguments);
-				this.div.innerHTML = '<img src=\"images/FAO_blue_20_transp.gif\" width=\"60\" height=\"60\" class=\"olPoweredBy\" id=\"olPoweredBy\" title=\"Powered by...\" style=\"position:absolute;left:635px;top:285px\"/>';
-				return this.div;
-			}
+    var poweredByControl = new OpenLayers.Control();
+    OpenLayers.Util.extend(poweredByControl, {
+        draw: function () {
+          OpenLayers.Control.prototype.draw.apply(this, arguments);
+          this.div.innerHTML = '<img src=\"images/FAO_blue_20_transp.gif\" width=\"60\" height=\"60\" class=\"olPoweredBy\" id=\"olPoweredBy\" title=\"Powered by...\" style=\"position:absolute;left:690px;top:285px\"/>';
+          return this.div;
+        }
 
-	});
-	myMap.addControl(poweredByControl);
+    });
+    
+    myMap.addControl(poweredByControl);
 	
     //
     // build up all controls            
@@ -220,7 +220,7 @@ Ext.onReady( function() {
     myMap.addControl(mouseMove);
     myMap.addControl(new OpenLayers.Control.LayerSwitcher());
 	
-    myMap.zoomToMaxExtent();
+    //myMap.zoomToMaxExtent();
 
     OpenLayers.Util.onImageLoad = function(){
        // //////////////////////
@@ -235,8 +235,7 @@ Ext.onReady( function() {
        // //////////////////////
        // Tuna code
        // ////////////////////// 
-       if(tuna_map && !(activeTab instanceof AnimationPanel)){
-               
+       if(tuna_map && !(activeTab instanceof AnimationPanel)){               
             Ext.getCmp('quarter-slider').enable(); 
             Ext.getCmp('years-slider').enable();       
             
@@ -249,7 +248,6 @@ Ext.onReady( function() {
             Ext.getCmp("last-year").enable(); 
             Ext.getCmp("first-year").enable(); 
        }
-
     };
     
     //
@@ -262,33 +260,44 @@ Ext.onReady( function() {
     var panel = new Ext.Panel({
         id:'main-panel',
         baseCls:'x-plain',
-        renderTo: Ext.getBody(),
+        renderTo: 'ext-main',//Ext.getBody(),
         layout:'table',
         layoutConfig: {columns:2},
         width : 800,
+        style: {
+            'text-align': 'left'/*,
+            'padding-left': 5,
+            'padding-right': 5*/
+        },
+        /*listeners: {
+            afterrender: function(cmp){
+                alert("eco");
+                Ext.getCmp('info-panel').collapse(true);
+            }
+        }, */
         // applied to child components
         defaults: {frame:false, header: false},
         items:[
-            {
+            /*{
               colspan : 2,
               border: false,
               html : [
                 '<table border="0" cellpadding="0" cellspacing="0" width="100%">',
+                //'<tr>',
+                //'<td colspan="4">',
+                //'<span class="headtext">Atlas of Tuna and Billfish Catches</span>',
+                //'</td>',
+                //'</tr>',
                 '<tr>',
                 '<td colspan="4">',
-                '<span class="headtext">Atlas of Tuna and Billfish Catches</span>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td colspan="4" class="smalltext">',
-                '<div style="width:660px; text-align:justify;">',
+                '<span class="smalltext">',
                 'To define your Query, select items of interest from the Selection Tabs, define your Display Options and click the Submit button to see results. Due to the amount of data, it may take some time to obtain result, please be patient.	 For background information, please <a href="http://www.fao.org/figis/servlet/static?dom=collection&xml=tunabillfishatlas.xml">read here</a>. User can also download the full set of data used to prepare the maps for <a href="ftp://ftp.fao.org//fi/document/tunatlas/llcatch.zip">Longline</a>, <a href="ftp://ftp.fao.org//fi/document/tunatlas/plcatch.zip">Pole & Line</a> and <a href="ftp://ftp.fao.org//fi/document/tunatlas/pscatch.zip">Purse Seine</a>.',
-                '</div>',
+                '</span>',
                 '</td>',
                 '</tr>',
                 '</table>'
               ].join('')
-            },
+            },*/
             {
               xtype: 'panel',
               id: 'info-panel',
@@ -297,7 +306,7 @@ Ext.onReady( function() {
               collapsible: true,
               collapsed: true,
               forceLayout: true,
-              width: 730,
+              width: 790,//730
               colspan : 2,
               border: true,
               listeners: {
@@ -349,7 +358,7 @@ Ext.onReady( function() {
                 stateId: "mappanel",
                 renderTo: '',
                 height: 350,
-                width: 700,
+                width: 760,//700
                 map: myMap,
                 border: true
             }),
@@ -381,8 +390,7 @@ Ext.onReady( function() {
                             Ext.getCmp('quarter-max-field').setValue('Q' + quarters.getValues()[1]);
                             
                             if (validateSelection()) {
-				expandPan();					
-				//issueUpdate();
+				                       expandPan();					
                             }
                         }
                     }),
@@ -408,9 +416,7 @@ Ext.onReady( function() {
                         listeners: {
                           changecomplete : function (){
                             if (validateSelection()) {
-				expandPan();
-				
-				//issueUpdate();
+				                       expandPan();
                             }
                             
                             Ext.getCmp('quarter-min-field').setValue('Q' + this.getValues()[0]);
@@ -442,8 +448,7 @@ Ext.onReady( function() {
                             Ext.getCmp('quarter-max-field').setValue('Q' + quarters.getValues()[1]);
                             
                             if (validateSelection()) {
-				expandPan();					
-				//issueUpdate();
+				                       expandPan();					
                             }
                         }
                     })
@@ -465,19 +470,15 @@ Ext.onReady( function() {
                         iconCls: "first-year",
                         handler: function(){
                             var years = Ext.getCmp('years-slider');	
-                            //var yr_start = years.getValues()[0];
                             var yr_end = years.getValues()[1];
                             
                             years.setValue(0, '1950');
                             years.setValue(1, yr_end);
                             
-                            //Ext.getCmp('years-min-field').setValue(years.getValues()[0]);
-                            //Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             Ext.getCmp('years-min-field').setValue('1950');
                             
                             if (validateSelection()) {
-				expandPan();					
-				//issueUpdate();
+				                       expandPan();					
                             }
                         }
                     }),
@@ -498,8 +499,7 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-				expandPan();					
-				//issueUpdate();
+				                       expandPan();					
                             }
                         }
                     }),
@@ -520,8 +520,7 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-				expandPan();					
-				//issueUpdate();
+				                       expandPan();					
                             }
                         }
                     }), 
@@ -530,15 +529,14 @@ Ext.onReady( function() {
                         xtype: 'textfield',
                         readOnly: true,
                         width: 40,
-                        value: '1950' //new Date().getFullYear() - 1
+                        value: '1950'
                     },
                     new Ext.slider.MultiSlider({
                         id : 'years-slider',
                         vertical : false,
-                        width   : 518,
+                        width   : 550, //518,
                         minValue: 1950,
                         maxValue: new Date().getFullYear(),
-                        //values  : [new Date().getFullYear() - 1, new Date().getFullYear()],
                         values  : ['1950', new Date().getFullYear()],
                         plugins : new Ext.slider.Tip({
                             getText: function(thumb){
@@ -548,10 +546,7 @@ Ext.onReady( function() {
                         listeners: {
                             changecomplete : function (){
                                 if (validateSelection()) {
-                                        //myMap.events.idle = true;
                                 	expandPan();
-                                	//myMap.events.idle = false;
-                                        //issueUpdate();
                                 }
                                 Ext.getCmp('years-min-field').setValue(this.getValues()[0]);
                                 Ext.getCmp('years-max-field').setValue(this.getValues()[1]);
@@ -582,8 +577,7 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-				expandPan();					
-				//issueUpdate();
+				                       expandPan();					
                             }
                         }
                     }),				
@@ -604,8 +598,7 @@ Ext.onReady( function() {
                             Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             
                             if (validateSelection()) {
-				expandPan();					
-				//issueUpdate();
+				                      expandPan();					
                             }
                         }
                     }),
@@ -617,18 +610,14 @@ Ext.onReady( function() {
                         handler: function(){
                             var years = Ext.getCmp('years-slider');	
                             var yr_start = years.getValues()[0];
-                            //var yr_end = years.getValues()[1];
                             
                             years.setValue(0, yr_start);
                             years.setValue(1, new Date().getFullYear());
                             
-                            //Ext.getCmp('years-min-field').setValue(years.getValues()[0]);
-                            //Ext.getCmp('years-max-field').setValue(years.getValues()[1]);
                             Ext.getCmp('years-max-field').setValue(new Date().getFullYear());
                             
                             if (validateSelection()) {
-				expandPan();					
-				//issueUpdate();
+				                       expandPan();					
                             }
                         }
                     })
@@ -637,7 +626,7 @@ Ext.onReady( function() {
             {
                xtype: 'tabpanel',
                id: 'tab-panel',
-               width: 730,
+               width: 790, //730,
                height: 500,
                colspan : 2,
                activeTab: 0,
@@ -713,7 +702,7 @@ Ext.onReady( function() {
                       title: 'Query parameters',
                       iconCls: 'controls-tab',
                       id: 'controls-panel',
-                      width: 730,
+                      width: 770, //730,
                       items: [
                           {
                               xtype: 'panel',
@@ -728,8 +717,7 @@ Ext.onReady( function() {
                                       iconCls: 'map-button-img',
                                       handler: function(){                                              
                                           if (validateMap()) {
-						expandPan();
-						
+						                                 expandPan();
                                           }else{
                                               if(selectedSpecies.length < 1){
                                                   document.getElementById('species').value = -1;
@@ -779,12 +767,12 @@ Ext.onReady( function() {
                                       }
                                   })
                               ],
-                              html : ['<table  class="gfi" border="0" cellpadding="0" cellspacing="0" style="width:650px;">',
-							  
-							    '<tr>',
-							  '<td colspan="4"><b>Select</b></td>',
-							  '<td><b>Aggregation method</b></td>',
-							  '</tr>',
+                              html : [
+                                '<table  class="gfi" border="0" cellpadding="0" cellspacing="0" style="width:650px;">',
+							                  '<tr>',
+                                '<td colspan="4"><b>Select</b></td>',
+                                '<td><b>Aggregation method</b></td>',
+							                  '</tr>',
                                 '<tr>',
                                 '<td style="width:70px; vertical-align:top;"> ',
                                 '<select id="gearType">',
@@ -802,13 +790,12 @@ Ext.onReady( function() {
                                 '<td style="width:20px; vertical-align:top;">',
                                 '<div id="specieslist"></div>',
                                 '</td>',
-                                  '<td >',
-				'<input type="radio" name="statistics" id="sum" checked="checked" /><label for="sum">Sum across years</label> <br />',
+                                '<td >',
+				                        '<input type="radio" name="statistics" id="sum" checked="checked" /><label for="sum">Sum across years</label> <br />',
                                 '<input type="radio" name="statistics" id="avg" /><label for="avg">Average across years</label> <br />',
-								'</td>',
-								  '</tr>',
+								                '</td>',
+								                '</tr>',
                                 '<tr>',
-                               
                                 '<td style="vertical-align:top;">',
                                 '<div id="selectedGearType"></div>',
                                 '</td>',
@@ -817,11 +804,10 @@ Ext.onReady( function() {
                                 '<td style="vertical-align:top;">',
                                 '<div id="selectedSpecies" ></div>',
                                 '</td>',
-								 '<td>&#160;</td>',
-                                 '<td style="vertical-align:top; align:center;">',
-                               
+								                '<td>&#160;</td>',
+                                '<td style="vertical-align:top; align:center;">',
                                 '</td>',
-								'</tr>',
+								                '</tr>',
                                 '</table>'].join('')
                           },
                           {
@@ -831,17 +817,16 @@ Ext.onReady( function() {
                               autoScroll: true,
                               html : [
                                   '<table class="gfi" border="0" cellpadding="0" cellspacing="0">',
-                                   '<tr>',
-								   '<td rowspan="6" style="vertical-align: top; width: 150px;"><b>Legend</b> <br/>Catches (tonnes) <br /><br />',
+                                  '<tr>',
+								                  '<td rowspan="6" style="vertical-align: top; width: 150px;"><b>Legend</b> <br/>Catches (tonnes) <br /><br />',
                                   '<div id="legendTunaAtlas">',
                                   '</div>',
                                   '</td>',
                                   '<td style="vertical-align: top;"><b>Cell info</b><br /><i>Click one cell on the map to get more info</i><br /><br /></td>',
                                   '</tr>',
-								  '<tr>',
+								                  '<tr>',
                                   '<td style="vertical-align: top;"><b><i>Aggregated catches</i></b></td>',
-                                  '</tr>',
-                                 
+                                  '</tr>',                                 
                                   '<tr>',
                                   '<td>',
                                   '<div id="nodelist"></div>',
@@ -857,8 +842,6 @@ Ext.onReady( function() {
                                   '<div id="brkdwn_nodelist"></div>',
                                   '</td>',
                                   '</tr>',
-                                
-                              
                                   '</table>'
                                 ].join('')
                           }
@@ -866,19 +849,19 @@ Ext.onReady( function() {
                  },{
                     xtype: 'panel',
                     border: false,
-                    width: 730,
+                    width: 790, //730,
                     title: 'Animations',
                     iconCls: 'animation-tab',
                     items: [
                        new AnimationPanel({
-                          width: 730,
+                          width: 790, //730,
                           id: 'animation-panel',
                           map: myMap
                        })
                     ]
                  }
                ]
-           }, {
+           }/*, {
                xtype: 'panel',
                id: 'last-tab',	
                width: 730,
@@ -893,7 +876,7 @@ Ext.onReady( function() {
                   'Each cell in the map is defined through a 6 digits number: "XYYZZZ". X is the Quadrant (1=NE, 2=SE, 3=SW and 4=NW), YY is Latitude and ZZZ is Longitude.  Latitude and  longitude define the corner of the cell nearest to the point where the Equator is crossed by the Greenwich Meridian. For further information please refer to <a href="http://www.fao.org/fishery/cwp/handbook/G/en" target="_blank">Section G in CWP Handbook of Fishery Statistical Standards</a>.',
                   '<br></td></tr></table>'
               ].join('')
-            }
+            }*/
         ]
     });
     
@@ -1084,7 +1067,7 @@ Ext.onReady( function() {
                 		"<a href='#' onclick='removeMe(this, \"gearType\", \"" + selection + "\");' title='Remove item'>X</a>" + 
                 	    "</td>" +
                 	    "<td width='13'>" +
-                		"<a href='#' onclick='' title='Info'>I</a>" +
+                		"<a href='http://www.geo-solutions.it' onclick='' title='Info'>I</a>" +
                 	    "</td>" +
                 	"</tr>" + 
                      "</table>" +
@@ -1113,7 +1096,7 @@ Ext.onReady( function() {
                 		"<a href='#' onclick='removeMe(this, \"species\", \"" + selection + "\");' title='Remove item'>X</a>" + 
                 	    "</td>" + 
                 	    "<td width='13'>" +
-                		"<a href='#' onclick='' title='Info'>I</a>" +
+                		"<a href='http://www.geo-solutions.it' onclick='' title='Info'>I</a>" +
                 	    "</td>" +
                 	"</tr>" + 
                      "</table>" +
@@ -1249,25 +1232,11 @@ Ext.onReady( function() {
     }    
 
 	function expandPan(){
-/*
-		var elem = Ext.get('years-slider').dom;
-
-		OpenLayers.Event.observe(elem, "click", block);
-		OpenLayers.Event.observe(elem, "mousedown", block);
-		OpenLayers.Event.observe(elem, "mousemove", block);
-		OpenLayers.Event.observe(elem, "mouseup", block);
-		OpenLayers.Event.observe(elem, "mouseover", block);
-		OpenLayers.Event.observe(elem, "mouseout", block); 
-		
-		function block(evt) {
-		     OpenLayers.Event.stop(evt);
-		}
-*/
 		var infoPanel = Ext.getCmp('info-panel');
 		var mainPanel = Ext.getCmp('main-panel');
 		var controlPanel = Ext.getCmp('controls-panel');
 		var tabpanel = Ext.getCmp('tab-panel');
-		var lasttab = Ext.getCmp('last-tab');
+		//var lasttab = Ext.getCmp('last-tab');
 		var panelMap = Ext.getCmp('gxmappanel');
                 
 		if(infoPanel.collapsed)
@@ -1277,7 +1246,7 @@ Ext.onReady( function() {
 		}else{
 		    controlPanel.syncSize();
 		    tabpanel.syncSize();
-		    lasttab.syncSize();
+		    //lasttab.syncSize();
 		}
 		
 		issueUpdate();		
@@ -1300,17 +1269,6 @@ function validateMap() {
             return false;
         }
     }
-
-    /*if (($('#selectedGearType').children().length == 0) || ($('#selectedSpecies').children().length == 0)) {
-        Ext.Msg.show({
-           title: "Map Draw",
-           msg: "Please select at least one Gear Type and one Species",
-           buttons: Ext.Msg.OK,
-           icon: Ext.MessageBox.WARNING
-        });
-        
-        return false;
-    }*/
     
     if ((selectedGears.length < 1) || (selectedSpecies.length < 1)) {
         Ext.Msg.show({

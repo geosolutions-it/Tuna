@@ -158,7 +158,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                 iconCls: 'map-button-img',
                 scope: this,
                 handler: function(){
- var bool = false;
+                    var bool = false;
                      
                     var url = Tuna.animationsURL;   
                     
@@ -261,15 +261,13 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                     //
                     // Checking advanced options
                     //
-                    //if(this.imageWidth.isDirty()){
-                        if(this.imageWidth.isValid()){
-                            var imgWidth = this.imageWidth.getValue();
-                            url += "width=" + imgWidth + "&";
-                        }
-                    //}
-                    
+                    if(this.imageWidth.isValid()){
+                        var imgWidth = this.imageWidth.getValue();
+                        url += "width=" + imgWidth + "&";
+                    }
+
                     if(this.loop)
-                        url += "format_options=gif_loop_continuosly:" + this.loop.getValue();
+                        url += "format_options=layout:message;gif_loop_continuosly:" + this.loop.getValue();
                         
                     if(this.frameRate.isDirty()){
                         if(this.frameRate.isValid())   
@@ -286,10 +284,11 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                         
                         var timestamp = new Date();
                         url += "&timestamp=" + timestamp.getTime();
-                         
-                	//alert(url);
-                	window.open(url);
-			}
+                        url += "&content-disposition=attachment&filename=animation";
+                        
+                        //alert(url);            
+                        window.open(url);
+                    }
                 }
             }),
             new Ext.Button({
@@ -401,16 +400,13 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                     //
                     // Checking advanced options
                     //
-                    //if(this.imageWidth.isDirty()){
-                        if(this.imageWidth.isValid()){
-                            var imgWidth = this.imageWidth.getValue();
-                            url += "width=" + imgWidth + "&";
-                        }
-                    //}
+                    if(this.imageWidth.isValid()){
+                        var imgWidth = this.imageWidth.getValue();
+                        url += "width=" + imgWidth + "&";
+                    }
                     
                     if(this.loop)
-                        url += "format_options=gif_loop_continuosly:" + this.loop.getValue();
-                        
+                        url += "format_options=layout:message;gif_loop_continuosly:" + this.loop.getValue();
                     if(this.frameRate.isDirty()){
                         if(this.frameRate.isValid())   
                             url += ";gif_frames_delay:" + this.frameRate.getValue();
@@ -426,6 +422,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                         
                         var timestamp = new Date();
                         url += "&timestamp=" + timestamp.getTime();
+                        
                         //alert(url);
                                                                         
                         var animationWin = new Ext.Window({
