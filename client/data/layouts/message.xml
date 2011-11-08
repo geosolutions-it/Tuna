@@ -1,0 +1,8 @@
+<layout>
+    <decoration type="text" affinity="top,left" offset="6,6">
+        <option name="message" value="Frame for ${avalue}"/>
+        <option name="font-size" value="12"/>
+        <option name="font-family" value="Free Sans"/>
+        <option name="halo-radius" value="2"/>        
+    </decoration>
+</layout>

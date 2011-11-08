@@ -256,6 +256,33 @@ Ext.onReady( function() {
     var click = new OpenLayers.Control.Click();
     myMap.addControl(click);
     click.activate();
+    
+    // //////////////////////////////////////////////////////////////////////////////
+    // FIX for a bug in ExtJs 3.3.1 due to a problem in the Ext.Slider drag event
+    // //////////////////////////////////////////////////////////////////////////////
+    Ext.override(Ext.dd.DragTracker, {
+        onMouseMove: function (e, target) {
+            var isIE9 = Ext.isIE && (/msie 9/.test(navigator.userAgent.toLowerCase())) && document.documentMode != 6;
+            if (this.active && Ext.isIE && !isIE9 && !e.browserEvent.button) {
+                e.preventDefault();
+                this.onMouseUp(e);
+                return;
+            }
+            e.preventDefault();
+            var xy = e.getXY(), s = this.startXY;
+            this.lastXY = xy;
+            if (!this.active) {
+                if (Math.abs(s[0] - xy[0]) > this.tolerance || Math.abs(s[1] - xy[1]) > this.tolerance) {
+                    this.triggerStart(e);
+                } else {
+                    return;
+                }
+            }
+            this.fireEvent('mousemove', this, e);
+            this.onDrag(e);
+            this.fireEvent('drag', this, e);
+        }
+    });
 
     var panel = new Ext.Panel({
         id:'main-panel',
@@ -265,39 +292,11 @@ Ext.onReady( function() {
         layoutConfig: {columns:2},
         width : 800,
         style: {
-            'text-align': 'left'/*,
-            'padding-left': 5,
-            'padding-right': 5*/
+            'text-align': 'left'
         },
-        /*listeners: {
-            afterrender: function(cmp){
-                alert("eco");
-                Ext.getCmp('info-panel').collapse(true);
-            }
-        }, */
         // applied to child components
         defaults: {frame:false, header: false},
         items:[
-            /*{
-              colspan : 2,
-              border: false,
-              html : [
-                '<table border="0" cellpadding="0" cellspacing="0" width="100%">',
-                //'<tr>',
-                //'<td colspan="4">',
-                //'<span class="headtext">Atlas of Tuna and Billfish Catches</span>',
-                //'</td>',
-                //'</tr>',
-                '<tr>',
-                '<td colspan="4">',
-                '<span class="smalltext">',
-                'To define your Query, select items of interest from the Selection Tabs, define your Display Options and click the Submit button to see results. Due to the amount of data, it may take some time to obtain result, please be patient.	 For background information, please <a href="http://www.fao.org/figis/servlet/static?dom=collection&xml=tunabillfishatlas.xml">read here</a>. User can also download the full set of data used to prepare the maps for <a href="ftp://ftp.fao.org//fi/document/tunatlas/llcatch.zip">Longline</a>, <a href="ftp://ftp.fao.org//fi/document/tunatlas/plcatch.zip">Pole & Line</a> and <a href="ftp://ftp.fao.org//fi/document/tunatlas/pscatch.zip">Purse Seine</a>.',
-                '</span>',
-                '</td>',
-                '</tr>',
-                '</table>'
-              ].join('')
-            },*/
             {
               xtype: 'panel',
               id: 'info-panel',
@@ -861,57 +860,46 @@ Ext.onReady( function() {
                     ]
                  }
                ]
-           }/*, {
-               xtype: 'panel',
-               id: 'last-tab',	
-               width: 730,
-               colspan : 2,
-               border:false,
-               html: [
-                  '<table class="reftopmenu" cellpadding="0" cellspacing="0">',
-                  '<tr style="margin-top:0px;" valign="middle" align="left"><td>',
-                  '<br>',
-                  '<b>Format of the code identifying statistical cells</b>',
-                  '<br>',
-                  'Each cell in the map is defined through a 6 digits number: "XYYZZZ". X is the Quadrant (1=NE, 2=SE, 3=SW and 4=NW), YY is Latitude and ZZZ is Longitude.  Latitude and  longitude define the corner of the cell nearest to the point where the Equator is crossed by the Greenwich Meridian. For further information please refer to <a href="http://www.fao.org/fishery/cwp/handbook/G/en" target="_blank">Section G in CWP Handbook of Fishery Statistical Standards</a>.',
-                  '<br></td></tr></table>'
-              ].join('')
-            }*/
+           }
         ]
     });
     
-    //
-    // Setting sliders fields tooltips
-    //
-    new Ext.ToolTip({
-        target: 'years-max-field',
-        html: "Years Range Max limit"
-    });
+    var isIE9 = Ext.isIE && (/msie 9/.test(navigator.userAgent.toLowerCase())) && document.documentMode != 6;
     
-    new Ext.ToolTip({
-        target: 'years-min-field',
-        html: "Years Range Min limit"
-    });
-    
-    new Ext.ToolTip({
-        target: 'quarter-min-field',
-        html: "Min limit of the quarters"
-    });
-    
-    new Ext.ToolTip({
-        target: 'quarter-max-field',
-        html: "Max limit of the quarters"
-    });
-
-    new Ext.ToolTip({
-        target: 'years-slider',
-        html: "Allows to set the years range"
-    });
+    if(!isIE9){
+        //
+        // Setting sliders fields tooltips
+        //
+        new Ext.ToolTip({
+            target: 'years-max-field',
+            html: "Years Range Max limit"
+        });
         
-    new Ext.ToolTip({
-        target: 'quarter-slider',
-        html: "Move to define the quarters range"
-    });
+        new Ext.ToolTip({
+            target: 'years-min-field',
+            html: "Years Range Min limit"
+        });
+        
+        new Ext.ToolTip({
+            target: 'quarter-min-field',
+            html: "Min limit of the quarters"
+        });
+        
+        new Ext.ToolTip({
+            target: 'quarter-max-field',
+            html: "Max limit of the quarters"
+        });
+
+        new Ext.ToolTip({
+            target: 'years-slider',
+            html: "Allows to set the years range"
+        });
+            
+        new Ext.ToolTip({
+            target: 'quarter-slider',
+            html: "Move to define the quarters range"
+        });
+    }
     
     document.getElementById('specieslist').innerHTML = "<img src=\"images/grid-loading.gif\">";   
     var speciesURL = Tuna.speciesURL;
@@ -1231,28 +1219,25 @@ Ext.onReady( function() {
         Ext.getCmp('print-button').enable();
     }    
 
-	function expandPan(){
-		var infoPanel = Ext.getCmp('info-panel');
-		var mainPanel = Ext.getCmp('main-panel');
-		var controlPanel = Ext.getCmp('controls-panel');
-		var tabpanel = Ext.getCmp('tab-panel');
-		//var lasttab = Ext.getCmp('last-tab');
-		var panelMap = Ext.getCmp('gxmappanel');
-                
-		if(infoPanel.collapsed)
-		    infoPanel.expand();
-		if(Ext.isIE7){
-		    mainPanel.syncSize();
-		}else{
-		    controlPanel.syncSize();
-		    tabpanel.syncSize();
-		    //lasttab.syncSize();
-		}
-		
-		issueUpdate();		
-	}
+    function expandPan(){
+        var infoPanel = Ext.getCmp('info-panel');
+        var mainPanel = Ext.getCmp('main-panel');
+        var controlPanel = Ext.getCmp('controls-panel');
+        var tabpanel = Ext.getCmp('tab-panel');
+        var panelMap = Ext.getCmp('gxmappanel');
+                    
+        if(infoPanel.collapsed)
+            infoPanel.expand();
+        if(Ext.isIE7){
+            mainPanel.syncSize();
+        }else{
+            controlPanel.syncSize();
+            tabpanel.syncSize();
+        }
+        
+        issueUpdate();		
+    }
 });
-
 
 function validateMap() {
     if ($('#avg')[0].checked) {

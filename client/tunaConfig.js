@@ -5,8 +5,8 @@ var Tuna = {
 	currentSiteURI: location.href.replace(/^([^:]+:\/\/[^\/]+).*$/,"$1")
 };
 
-Tuna.geoServerBase = Tuna.isDeveloper ? 'http://192.168.1.110:8484' : ( Tuna.isTesting ? 'http://193.43.36.238:8484' : ('http://' + document.domain ) );
-Tuna.restBase = Tuna.isDeveloper ? 'http://192.168.1.110:8484' : ( Tuna.isTesting ? 'http://193.43.36.238:8484' : ('http://' + document.domain ) );
+Tuna.geoServerBase = Tuna.isDeveloper ? 'http://192.168.1.106:8484' : ( Tuna.isTesting ? 'http://193.43.36.238:8484' : ('http://' + document.domain + ':8484') );
+Tuna.restBase = Tuna.isDeveloper ? 'http://192.168.1.106:8484' : ( Tuna.isTesting ? 'http://193.43.36.238:8484' : ('http://' + document.domain  + ':8484') );
 
 Tuna.vars = {
 	geoserverURL: Tuna.geoServerBase + "/figis/geoserver",

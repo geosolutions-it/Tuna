@@ -158,137 +158,10 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                 iconCls: 'map-button-img',
                 scope: this,
                 handler: function(){
-                    var bool = false;
-                     
-                    var url = Tuna.animationsURL;   
+                    var url = this.makeImageURL(true);
                     
-                    //
-                    // Filling Layers for WMS Animator
-                    //
-                    if (OpenLayers.Util.alphaHack()) {
-                        url += "layers=fifao:GRID_G5,fifao:TUNA_YEARLY_CATCHES,fifao:UN_CONTINENT&";
-                    } else {
-                        url += "layers=fifao:UN_CONTINENT,fifao:GRID_G5,fifao:TUNA_YEARLY_CATCHES,fifao:FAO_MAJOR,fifao:UN_CONTINENT&";
-                    }
-                     
-                    url += "format=image/gif;";
-                    url += "subtype=animated&";
-                    
-                    if(Ext.getCmp('span-radio').getValue().initialConfig.inputValue == 'years'){
-                    
-                        var quarters = Ext.getCmp('qt-check').getValue();
-                        if(this.startYear.isDirty() && this.endYear.isDirty() && quarters.length > 0){
-                              
-                            //
-                            // Manage YEARS WMS request
-                            //
-                            var start = this.startYear.getValue();
-                            var end = this.endYear.getValue();                                
-                            
-                            if(end < start){
-                                Ext.Msg.show({
-                                   title: "Animation Error",
-                                   msg: "End year is greater than start year !",
-                                   buttons: Ext.Msg.OK,
-                                   icon: Ext.MessageBox.ERROR
-                                });
-                            }else{                               
-                                url += "aparam=viewparams:YR_TA&";
-                                url += "avalues=";
-
-                                for(var i=start; i<=end; (this.increment.getValue() != 0 ? i+=this.increment.getValue() : i++)){
-                                   url += i;
-                                   
-                                   if(i < end)
-                                      url += ",";
-                                   else
-                                      url += "&";
-                                }     
-                                
-                                bool = true;                           
-                            }
-                            
-                            if(this.increment.getValue() > (end - start)){
-                                Ext.Msg.show({
-                                   title: "Animation Error",
-                                   msg: "Yearly Increment value is greater than the years range !",
-                                   buttons: Ext.Msg.OK,
-                                   icon: Ext.MessageBox.ERROR
-                                });
-                                
-                                bool = false;
-                            }
-                        }else{
-                            Ext.Msg.show({
-                               title: "Animation Error",
-                               msg: "Start and End year and at least one Quarter must be filled !",
-                               buttons: Ext.Msg.OK,
-                               icon: Ext.MessageBox.ERROR
-                            });
-                        }
-                    }else{
-                    
-                        //
-                        // Manage QUARTERS WMS request
-                        //                           
-                        var quarters = Ext.getCmp('qt-check').getValue();
-                        if(this.startYear.isDirty() && this.endYear.isDirty() && quarters.length > 0){
-                        
-                            url += "aparam=viewparams:QTR_TA&";
-                            url += "avalues=";
-                            
-                            for(var i=0; i<quarters.length; i++){
-                               url += quarters[i].initialConfig.inputValue;
-                               
-                               if(i < quarters.length - 1)
-                                  url += ",";
-                               else
-                                  url += "&";
-                            }
-                            
-                            bool = true;
-                            
-                        }else{
-                            Ext.Msg.show({
-                               title: "Animation Error",
-                               msg: "Start and End year and at least one Quarter must be filled !",
-                               buttons: Ext.Msg.OK,
-                               icon: Ext.MessageBox.ERROR
-                            });
-                        }
-                    }
-                    
-                    //
-                    // Checking advanced options
-                    //
-                    if(this.imageWidth.isValid()){
-                        var imgWidth = this.imageWidth.getValue();
-                        url += "width=" + imgWidth + "&";
-                    }
-
-                    if(this.loop)
-                        url += "format_options=layout:message;gif_loop_continuosly:" + this.loop.getValue();
-                        
-                    if(this.frameRate.isDirty()){
-                        if(this.frameRate.isValid())   
-                            url += ";gif_frames_delay:" + this.frameRate.getValue();
-                    }
-                    
-                    if(this.useBBOX.getValue()){
-                        var bounds = this.map.getExtent();
-                        url += "&bbox=" + bounds.left + "," + bounds.bottom + "," + bounds.right + "," + bounds.top;                       
-                    }
-                    
-                    if(bool){                            
-                        url += "&viewparams=" + this.getViewParams();
-                        
-                        var timestamp = new Date();
-                        url += "&timestamp=" + timestamp.getTime();
-                        url += "&content-disposition=attachment&filename=animation";
-                        
-                        //alert(url);            
+                    if(url)         
                         window.open(url);
-                    }
                 }
             }),
             new Ext.Button({
@@ -297,143 +170,46 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                 iconCls: 'animation-button',
                 scope: this,
                 handler: function(){ 
-                    var bool = false;
-                     
-                    var url = Tuna.animationsURL;   
+                    var url = this.makeImageURL(false);
                     
-                    //
-                    // Filling Layers for WMS Animator
-                    //
-                    if (OpenLayers.Util.alphaHack()) {
-                        url += "layers=fifao:GRID_G5,fifao:TUNA_YEARLY_CATCHES,fifao:UN_CONTINENT&";
-                    } else {
-                        url += "layers=fifao:UN_CONTINENT,fifao:GRID_G5,fifao:TUNA_YEARLY_CATCHES,fifao:FAO_MAJOR,fifao:UN_CONTINENT&";
-                    }
-                     
-                    url += "format=image/gif;";
-                    url += "subtype=animated&";
-                    
-                    if(Ext.getCmp('span-radio').getValue().initialConfig.inputValue == 'years'){
-                    
-                        var quarters = Ext.getCmp('qt-check').getValue();
-                        if(this.startYear.isDirty() && this.endYear.isDirty() && quarters.length > 0){
-                              
-                            //
-                            // Manage YEARS WMS request
-                            //
-                            var start = this.startYear.getValue();
-                            var end = this.endYear.getValue();                                
-                            
-                            if(end < start){
-                                Ext.Msg.show({
-                                   title: "Animation Error",
-                                   msg: "End year is greater than start year !",
-                                   buttons: Ext.Msg.OK,
-                                   icon: Ext.MessageBox.ERROR
-                                });
-                            }else{                               
-                                url += "aparam=viewparams:YR_TA&";
-                                url += "avalues=";
-
-                                for(var i=start; i<=end; (this.increment.getValue() != 0 ? i+=this.increment.getValue() : i++)){
-                                   url += i;
-                                   
-                                   if(i < end)
-                                      url += ",";
-                                   else
-                                      url += "&";
-                                }     
-                                
-                                bool = true;                           
-                            }
-                            
-                            if(this.increment.getValue() > (end - start)){
-                                Ext.Msg.show({
-                                   title: "Animation Error",
-                                   msg: "Yearly Increment value is greater than the years range !",
-                                   buttons: Ext.Msg.OK,
-                                   icon: Ext.MessageBox.ERROR
-                                });
-                                
-                                bool = false;
-                            }
-                        }else{
-                            Ext.Msg.show({
-                               title: "Animation Error",
-                               msg: "Start and End year and at least one Quarter must be filled !",
-                               buttons: Ext.Msg.OK,
-                               icon: Ext.MessageBox.ERROR
-                            });
+                    if(url){                                                    
+                        var isIE9 = Ext.isIE && (/msie 9/.test(navigator.userAgent.toLowerCase())) && document.documentMode != 6;
+                        
+                        var width = ((this.imageWidth.isDirty() && this.imageWidth.isValid()) ? this.imageWidth.getValue() : 900);
+                        var height;
+                        
+                        if(width == 256){
+                            height = 127 + 80;
+                        }else if(width > 256 && width <= 512){
+                            height = 255 + 80;
+                        }else if(width > 512 && width <= 768){
+                            height = 383 + 80;
+                        }else if(width > 768 && width <= 900){
+                            height = 449 + 80;
+                        }else if(width > 768 && width <= 1024){
+                            height = 511 + 80;
                         }
-                    }else{
-                    
-                        //
-                        // Manage QUARTERS WMS request
-                        //                           
-                        var quarters = Ext.getCmp('qt-check').getValue();
-                        if(this.startYear.isDirty() && this.endYear.isDirty() && quarters.length > 0){
-                        
-                            url += "aparam=viewparams:QTR_TA&";
-                            url += "avalues=";
+                             
+                        if(!height)
+                            height = isIE9 ? 511 + 80 : 350;
                             
-                            for(var i=0; i<quarters.length; i++){
-                               url += quarters[i].initialConfig.inputValue;
-                               
-                               if(i < quarters.length - 1)
-                                  url += ",";
-                               else
-                                  url += "&";
-                            }
-                            
-                            bool = true;
-                            
-                        }else{
-                            Ext.Msg.show({
-                               title: "Animation Error",
-                               msg: "Start and End year and at least one Quarter must be filled !",
-                               buttons: Ext.Msg.OK,
-                               icon: Ext.MessageBox.ERROR
-                            });
-                        }
-                    }
-                    
-                    //
-                    // Checking advanced options
-                    //
-                    if(this.imageWidth.isValid()){
-                        var imgWidth = this.imageWidth.getValue();
-                        url += "width=" + imgWidth + "&";
-                    }
-                    
-                    if(this.loop)
-                        url += "format_options=layout:message;gif_loop_continuosly:" + this.loop.getValue();
-                    if(this.frameRate.isDirty()){
-                        if(this.frameRate.isValid())   
-                            url += ";gif_frames_delay:" + this.frameRate.getValue();
-                    }
-                    
-                    if(this.useBBOX.getValue()){
-                        var bounds = this.map.getExtent();
-                        url += "&bbox=" + bounds.left + "," + bounds.bottom + "," + bounds.right + "," + bounds.top;                       
-                    }
-                    
-                    if(bool){                            
-                        url += "&viewparams=" + this.getViewParams();
-                        
-                        var timestamp = new Date();
-                        url += "&timestamp=" + timestamp.getTime();
-                        
-                        //alert(url);
-                                                                        
                         var animationWin = new Ext.Window({
                             title: 'Animation',
                             iconCls: 'amination-win',
                             closable: true,
-                            width: (this.imageWidth.isDirty() && this.imageWidth.isValid()) ? this.imageWidth.getValue() : 900,
-                            height: 350,
+                            width: width + 30,
+                            height: height,
                             modal: true,
+                            resizable: !isIE9,
+                            draggable: !isIE9,
                             layout: 'border',
                             bodyStyle: 'padding: 5px;',
+                            listeners: {
+                                scope: this,
+                                close: function(p){
+                                    this.enable(true);
+                                }
+                            },
                             items: [
                                 {
                                     region: 'south',
@@ -496,6 +272,8 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                             ]
                         });
                         
+                        this.disable(true);
+                        
                         animationWin.show();
                         this.fillAnimationInfo();
                     }
@@ -503,8 +281,6 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
             })
         ];
         
-
-                
         this.items = [
             {
                 layout: 'column',
@@ -633,6 +409,155 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
         
         
         return viewparams;
+    },
+    
+    makeImageURL: function(toDownload){
+        var bool = false;
+         
+        var url = Tuna.animationsURL;   
+        
+        //
+        // Filling Layers for WMS Animator
+        //
+        if (OpenLayers.Util.alphaHack()) {
+            url += "layers=fifao:GRID_G5,fifao:TUNA_YEARLY_CATCHES,fifao:UN_CONTINENT&";
+        } else {
+            url += "layers=fifao:UN_CONTINENT,fifao:GRID_G5,fifao:TUNA_YEARLY_CATCHES,fifao:FAO_MAJOR,fifao:UN_CONTINENT&";
+        }
+         
+        url += "format=image/gif;";
+        url += "subtype=animated&";
+        
+        if(Ext.getCmp('span-radio').getValue().initialConfig.inputValue == 'years'){
+        
+            var quarters = Ext.getCmp('qt-check').getValue();
+            if(this.startYear.isDirty() && this.endYear.isDirty() && quarters.length > 0){
+                  
+                //
+                // Manage YEARS WMS request
+                //
+                var start = this.startYear.getValue();
+                var end = this.endYear.getValue();                                
+                
+                if(end < start){
+                    Ext.Msg.show({
+                       title: "Animation Error",
+                       msg: "End year is greater than start year !",
+                       buttons: Ext.Msg.OK,
+                       icon: Ext.MessageBox.ERROR
+                    });
+                }else{         
+                
+                    if(this.increment.getValue() > (end - start)){
+                        Ext.Msg.show({
+                           title: "Animation Error",
+                           msg: "Yearly Increment value is greater than the years range !",
+                           buttons: Ext.Msg.OK,
+                           icon: Ext.MessageBox.ERROR
+                        });
+                        
+                        bool = false;
+                    }else{
+                        url += "aparam=viewparams:YR_TA&";
+                        url += "avalues=";
+
+                        for(var i=start; i<=end; (this.increment.getValue() != 0 ? i+=this.increment.getValue() : i++)){
+                           url += i;
+                           
+                           if(i < end)
+                              url += ",";
+                           else
+                              url += "&";
+                        }     
+                        
+                        bool = true;  
+                    }   
+                }
+            }else{
+                Ext.Msg.show({
+                   title: "Animation Error",
+                   msg: "Start and End year and at least one Quarter must be filled !",
+                   buttons: Ext.Msg.OK,
+                   icon: Ext.MessageBox.ERROR
+                });
+            }
+        }else{
+        
+            //
+            // Manage QUARTERS WMS request
+            //                           
+            var quarters = Ext.getCmp('qt-check').getValue();
+            if(this.startYear.isDirty() && this.endYear.isDirty() && quarters.length > 0){
+            
+                var start = this.startYear.getValue();
+                var end = this.endYear.getValue();  
+                
+                if(end < start){
+                    Ext.Msg.show({
+                       title: "Animation Error",
+                       msg: "End year is greater than start year !",
+                       buttons: Ext.Msg.OK,
+                       icon: Ext.MessageBox.ERROR
+                    });
+                }else{ 
+                    url += "aparam=viewparams:QTR_TA&";
+                    url += "avalues=";
+                    
+                    for(var i=0; i<quarters.length; i++){
+                       url += quarters[i].initialConfig.inputValue;
+                       
+                       if(i < quarters.length - 1)
+                          url += ",";
+                       else
+                          url += "&";
+                    }
+                    
+                    bool = true;
+                }                            
+            }else{
+                Ext.Msg.show({
+                   title: "Animation Error",
+                   msg: "Start and End year and at least one Quarter must be filled !",
+                   buttons: Ext.Msg.OK,
+                   icon: Ext.MessageBox.ERROR
+                });
+            }
+        }
+        
+        //
+        // Checking advanced options
+        //
+        if(this.imageWidth.isValid()){
+            var imgWidth = this.imageWidth.getValue();
+            url += "width=" + imgWidth + "&";
+        }
+        
+        if(this.loop)
+            url += "format_options=layout:message;gif_loop_continuosly:" + this.loop.getValue();
+        if(this.frameRate.isDirty()){
+            if(this.frameRate.isValid())   
+                url += ";gif_frames_delay:" + this.frameRate.getValue();
+        }
+        
+        if(this.useBBOX.getValue()){
+            var bounds = this.map.getExtent();
+            url += "&bbox=" + bounds.left + "," + bounds.bottom + "," + bounds.right + "," + bounds.top;                       
+        }
+        
+        if(bool){                            
+            url += "&viewparams=" + this.getViewParams();
+            
+            var timestamp = new Date();
+            url += "&timestamp=" + timestamp.getTime();
+            
+            if(toDownload)
+                url += "&content-disposition=attachment&filename=animation.gif";
+            
+            //alert(url);  
+            
+            return url;          
+        }else
+            return null;
     }
 });
 
