@@ -642,6 +642,15 @@ Ext.onReady( function() {
                           // Checking the Gears Type and Species mandatory selections
                           // 
                           if(this.validateSelection()){
+                              var animator = Ext.getCmp('animation-panel');
+                              
+                              var years = Ext.getCmp('years-slider');	
+                              var y_start = years.getValues()[0];
+                              var y_end = years.getValues()[1];
+
+                              animator.setStartY(y_start);
+                              animator.setEndY(y_end);
+
                               return true;
                           }else{
                               Ext.Msg.show({
@@ -759,7 +768,7 @@ Ext.onReady( function() {
                                           	var printBaseURL = href + 'print.html?' + getViewParams() + '&' + myMap.getExtent().left + '&' + myMap.getExtent().bottom + '&' + myMap.getExtent().right + '&' + myMap.getExtent().top + '&' + layer1 + '&' + layer2 + '&' + layer3 ;
                                           }else{
                                               var printBaseURL = href + 'print.html?' + getViewParams() + '&' + myMap.getExtent().left + '&' + myMap.getExtent().bottom + '&' + myMap.getExtent().right + '&' + myMap.getExtent().top + '&' + layer1 + '&' + layer2 + '&' + layer3 + '&' + params.BBOX + '&' + params.X + '&' + params.Y + '&' + params.WIDTH + '&' + params.HEIGHT + '&' + brkdwn_params.BBOX + '&' + brkdwn_params.X + '&' + brkdwn_params.Y + '&' + brkdwn_params.WIDTH + '&' + brkdwn_params.HEIGHT  ;
-                                              }
+                                          }
                                               
                                               window.open(printBaseURL);
                                           }
@@ -855,6 +864,8 @@ Ext.onReady( function() {
                        new AnimationPanel({
                           width: 790, //730,
                           id: 'animation-panel',
+                          startY: Ext.getCmp('years-slider').getValues()[0],
+                          endY: Ext.getCmp('years-slider').getValues()[1],
                           map: myMap
                        })
                     ]

@@ -4,6 +4,10 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
     
     map: null,
     
+    startY: null,
+    
+    endY: null,
+    
     initComponent: function() {  
    
         var yearStore = new Ext.data.JsonStore({
@@ -29,9 +33,10 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
             valueField: "year",
             width: 150,
             store: yearStore,
+            value: this.startY,
             editable: false
         });
-        
+
         this.endYear = new Ext.form.ComboBox({
             fieldLabel: "End Year",
             allowBlank: true,
@@ -43,6 +48,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
             valueField: "year",
             width: 150,
             store: yearStore,
+            value: this.endY,
             editable: false
         });
         
@@ -309,6 +315,16 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
     
     getPanel: function(){        
         return this;
+    },
+    
+    setStartY: function(startYear){
+        this.startY = startYear;
+        this.startYear.setValue(this.startY);
+    },
+    
+    setEndY: function(endYear){
+        this.endY = endYear;
+        this.endYear.setValue(this.endY); 
     },
     
     fillAnimationInfo: function(){
