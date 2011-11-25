@@ -50,7 +50,15 @@
                   text-transform:lowercase;
                   padding:.2em .2em; 
           }
+		  table.reftopmenu{
+			width:682px;
+		  }
+		  .maxPrintableWidth{
+			width:682px;
+			text-align:justify;
 			
+		  }
+		  
     </style>		
 		
 		<script type="text/javascript">
@@ -146,14 +154,14 @@
 				<tr>
 				<td colspan="4">
 				<img align="middle" src="http://www.fao.org/fi/figis/selector/assets/images/query.gif">
-				<span class="headtext">Atlas of Tuna and Billfish Catches: Interactive display</span>
+				<span class="headtext">Atlas of Tuna and Billfish Catches</span>
 				</td>
 				</tr>
 				<tr>
 				<td colspan="4" class="smalltext">
-				<div style="width:660px; text-align:justify;">
+				<!--div style="width:660px; text-align:justify;">
 				To define your Query, select items of interest from the Selection Tabs, define your Display Options and click the Submit button to see results. Due to the amount of data, it may take some time to obtain result, please be patient.	 For background information, please <a href="http://www.fao.org/figis/servlet/static?dom=collection&xml=tunabillfishatlas.xml">read here</a>. User can also download the full set of data used to prepare the maps for <a href="ftp://ftp.fao.org//fi/document/tunatlas/llcatch.zip">Longline</a>, <a href="ftp://ftp.fao.org//fi/document/tunatlas/plcatch.zip">Pole & Line</a> and <a href="ftp://ftp.fao.org//fi/document/tunatlas/pscatch.zip">Purse Seine</a>
-				</div>
+				</div-->
 				</td>
 				</tr>
 				</table>
@@ -256,6 +264,7 @@
         <tr align="left" valign="middle">
         <td colspan="2">
         <br>
+		<!--
         <u>FIELDS DESCRIPTION</u>
         <br>
         <b>Ocean area</b>
@@ -263,6 +272,24 @@
         99-Latitude 999-Longitude}, where Quadrant {1=NE, 2=SE, 3=SW and 4=NW}.
         <br><b>Year.Quarter</b> breakdown of catches in tonnes by years and quarters (i.e. 2001.Q1 =  1st Quarter 2001).
         <br><b>SUM(Year.Quarter)</b> or <b>AVG(Year.Quarter)</b> cumulative catches or average catches for selected years and quarters.
+		<br>
+		-->
+		<p class="maxPrintableWidth">
+		Each cell in the map is defined through a 6 digits number:"XYYZZZ".
+		X is the Quadrant(1=NE, 2=SE, 3=SW, 4=NW), YY is Latitude and zzz is Longitude.
+		Latitude and longitude define the corner of the cell nearest to the point where the Equatur is crossed by the Greenwich Meridian.
+		For further information please refer to <u>Section G in CWP Handbook of Fishery Statistical Standards</u>.
+		<br>
+		<br>
+		</p>
+		
+		
+        		
+        <br> 
+		<p class="maxPrintableWidth">
+		Disclamer: The designations employed and the presentation of material in the map(s) are for illustration only and do not imply
+		the expression of any option whatsoever on the part of FAO concerning the legal or constitutional status of any country,
+		territory or sea area, or concerning the delimitation of frontiers or boundaries.</p>
         <br>
         <br>
         <div id="print-button-div"></div>
@@ -319,10 +346,10 @@
             	var widthBrkdwnParams = href.split('&')[16];
             	var heightBrkdwnParams = href.split('&')[17];
 
-                var topContinent = Tuna.vars.wms + '?LAYERS=fifao:UN_CONTINENT&FORMAT=image/png&TRANSPARENT=FALSE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768&format_options=layout:scaleline';
+                var topContinent = Tuna.vars.wms + '?LAYERS=fifao:UN_CONTINENT&FORMAT=image/png&TRANSPARENT=FALSE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768'/*&format_options=layout:scaleline'*/;
                 
                 if (layer3 == 'true'){
-		        var allArea = Tuna.vars.wms + '?LAYERS=fifao:FAO_MAJOR,fifao:UN_CONTINENT&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768&format_options=layout:scaleline';
+		        var allArea = Tuna.vars.wms + '?LAYERS=fifao:FAO_MAJOR,fifao:UN_CONTINENT&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768'/*&format_options=layout:scaleline*/;
 
                 var allAreaDiv = document.getElementById('AllAreas');				
                 allAreaDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + allArea + '">';
@@ -330,7 +357,7 @@
                 }
                 
                 if (layer2 == 'true'){
-		        var tunaMap = Tuna.vars.wms + '?LAYERS=fifao:TUNA_YEARLY_CATCHES&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&VIEWPARAMS=' + viewParams + '&format_options=layout:scaleline';
+		        var tunaMap = Tuna.vars.wms + '?LAYERS=fifao:TUNA_YEARLY_CATCHES&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&VIEWPARAMS=' + viewParams/* + '&format_options=layout:scaleline'*/;
 		        
                 var tunaDiv = document.getElementById('TunaAtlas');				
                 tunaDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + tunaMap + '">';	
@@ -338,7 +365,7 @@
                 }
                 
                 if (layer1 == 'true'){
-		        var worldGrid = Tuna.vars.wms + '?LAYERS=fifao:GRID_G5&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768&format_options=layout:scaleline';
+		        var worldGrid = Tuna.vars.wms + '?LAYERS=fifao:GRID_G5&FORMAT=image/png&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG:4326&BBOX='+Left+','+Bottom+','+Right+','+Top+'&WIDTH=768&HEIGHT=768&'/*format_options=layout:scaleline'*/;
 		        
                 var worldGridDiv = document.getElementById('WorldGrid');				
                 worldGridDiv.innerHTML = '<img style="width: 680px; height: 330px; position: relative;" class="olTileImage" src="' + worldGrid + '">';	
@@ -418,17 +445,10 @@
                         var q = '';
                         var j = 0;
                         for(var k=0; k<periods.length; k++){
-                            if(j == 23){
-                                j = 0;
-                                q += '<br>';
-                            }else{
                                 q += periods[k];
                                 
                                 if(k + 1 != periods.length)
-                                    q += ","
-                            }
-                              
-                            j++;
+                                    q += ", "
                         }
 
                         periods = q;

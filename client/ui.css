@@ -8,6 +8,7 @@
          display : block;
        font-size :  24px;
       font-style : normal;
+	  font-family: Tahoma;
      font-weight : bold;
             left : 0.5em;
           margin : 0;
@@ -110,6 +111,21 @@
 #disclaimer p {
                  /*padding :   0px  10px;*/
                  font-family: Arial, Helvetica, Verdana, sans-serif;
+}
+/*
+#tabperiod{
+	width:790px;
+}
+*/
+#suggestintro{
+	color:#036;
+	font-size:16px;
+	font-family: "liberation sans",arial,helvetica,sans-serif;
+}
+#suggesttext,#moresuggest {
+	color:#000;
+	font-size:12px;
+	font-family: "liberation sans",arial,helvetica,sans-serif;
 }
 
 .no-border{
@@ -488,4 +504,28 @@ select{
     padding-left: 1;
     padding-top: 0;
     padding-right: 0;
+}
+a:hover , #suggesttext a:hover, #moresuggest a:hover{
+	color: #F90;
+	cursor: pointer;
+	font-family: "Liberation Sans", Arial, Helvetica, sans-serif;
+}
+#suggesttext a,#suggesttext a:visited , #moresuggest a,#moresuggest a:visited{
+	color: #2D8B8C;
+	text-decoration:none;
+	
+}
+
+
+/* ICONS */
+a:hover.linknd{
+	color: #F90;
+	cursor: pointer;
+	font-family: Liberation Sans, Arial, Helvetica, sans-serif
+}
+a.linknd ,a:visited.linknd{
+	color:#2D8B8C;
+	text-decoration:none;
+	font-family: Liberation Sans, Arial, Helvetica, sans-serif;
+	
 }

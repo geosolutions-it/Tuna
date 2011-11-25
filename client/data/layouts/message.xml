@@ -1,8 +1,9 @@
 <layout>
-    <decoration type="text" affinity="top,left" offset="6,6">
-        <option name="message" value="Frame for ${avalue}"/>
-        <option name="font-size" value="12"/>
+    <decoration type="text" affinity="top,center" offset="0,0">
+        <option name="message" value="Catches in ${avalue}"/>
+        <option name="font-size" value="14"/>
         <option name="font-family" value="Free Sans"/>
-        <option name="halo-radius" value="2"/>        
+        <option name="halo-radius" value="2"/>    
+		<option name="font-weight" value="bold"/>
     </decoration>
 </layout>

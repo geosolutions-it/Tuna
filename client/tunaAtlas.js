@@ -107,7 +107,7 @@ Ext.onReady( function() {
         }
     });	
 	  
-	  bounds = new OpenLayers.Bounds(-180, -90, 180, 90);
+	bounds = new OpenLayers.Bounds(-180, -90, 180, 90);
 	  
     var options = {
     	theme: null, 
@@ -121,7 +121,7 @@ Ext.onReady( function() {
 	
 	  myMap = new OpenLayers.Map('gxmappanel', options);
 	  
-    fao_areas = new OpenLayers.Layer.WMS("FAO Fishing Areas", Tuna.vars.gwc,
+    /*fao_areas = new OpenLayers.Layer.WMS("FAO Fishing Areas", Tuna.vars.gwc,
         {
             layers: 'fifao:FISHING_AREAS',
             format: OpenLayers.Util.alphaHack() ? "image/gif" : "image/jpeg",
@@ -135,9 +135,42 @@ Ext.onReady( function() {
             wrapDateLine: true,
             ratio: 1
         }
+    );*/
+	
+	var fao_areas = new OpenLayers.Layer.WMS("FAO Fishing Areas", Tuna.vars.gwc,
+        {
+            layers: 'fifao:FAO_MAJOR',
+            format: OpenLayers.Util.alphaHack() ? "image/gif" : "image/jpeg",
+            tiled: 'true',
+            tilesOrigin : "-180.0,-90.0",
+            transparent: true
+        },{
+            singleTile: false,
+            buffer: 0,
+            isBaseLayer: false,
+            wrapDateLine: true,
+            ratio: 1
+        }
+    );
+	
+    var continents = new OpenLayers.Layer.WMS("Continents Mask", Tuna.vars.gwc,
+        {
+            layers: 'fifao:UN_CONTINENT',
+            format: OpenLayers.Util.alphaHack() ? "image/gif" : "image/jpeg",
+            tiled: 'true',
+            tilesOrigin : "-180.0,-90.0",
+            transparent: true
+        },{
+            singleTile: false,
+            buffer: 0,
+            isBaseLayer: false,
+            wrapDateLine: true,
+			displayInLayerSwitcher: false,			
+            ratio: 1
+        }
     );
     
-    tuna_map = new OpenLayers.Layer.WMS("Tuna Atlas", Tuna.vars.wms, 
+    var tuna_map = new OpenLayers.Layer.WMS("Tuna and Billfish Catches", Tuna.vars.wms, 
         {
             layers: 'fifao:TUNA_YEARLY_CATCHES',
             format: OpenLayers.Util.alphaHack() ? "image/gif" : "image/png",
@@ -153,7 +186,7 @@ Ext.onReady( function() {
         }
     );
     
-    world_grid = new OpenLayers.Layer.WMS("5x5-deg Grid", Tuna.vars.gwc,
+    var world_grid = new OpenLayers.Layer.WMS("5x5-deg Grid", Tuna.vars.gwc,
         {
             layers: 'fifao:GRID_G5',
             format: OpenLayers.Util.alphaHack() ? "image/gif" : "image/png",
@@ -169,7 +202,7 @@ Ext.onReady( function() {
         }
     );
     
-    top_continent = new OpenLayers.Layer.WMS("Continents", Tuna.vars.gwc,
+    var top_continent = new OpenLayers.Layer.WMS("Continents", Tuna.vars.gwc,
         {
             layers: 'fifao:UN_CONTINENT',
             format: OpenLayers.Util.alphaHack() ? "image/gif" : "image/png",
@@ -192,7 +225,7 @@ Ext.onReady( function() {
     if (OpenLayers.Util.alphaHack()) {
         myMap.addLayers([world_grid, tuna_map, top_continent]);
     } else {
-        myMap.addLayers([top_continent, world_grid, tuna_map, fao_areas]);
+        myMap.addLayers([top_continent, world_grid, tuna_map, fao_areas, continents]);
     }
     
     var poweredByControl = new OpenLayers.Control();
@@ -622,17 +655,60 @@ Ext.onReady( function() {
                     })
                 ]
             },
+			{
+				xtype: 'panel',
+				height: 70, 
+				border: false,
+				width: 790,
+				colspan : 2,
+				items:[
+					{
+						xtype: 'panel',
+						id: 'suggestintropan',
+						height: 70,
+						border: false,
+						collapsible: true,
+						collapsed: false,
+						collapseMode: 'mini',
+						hideCollapseTool: true,
+						html: [
+							'<p id="suggestintro">Select tuna and billfish statistics.</p>',
+							'<p id="suggesttext"> Select year and quarter ranges, one more gear types and species and aggregation method. ',
+							'<a onclick="toggleMoreSuggest();">Full istruction...</a></p>'
+						].join('')
+					},
+					{
+						xtype: 'panel',
+						id: 'moresuggestpan',
+						height: 70,
+						border: false,
+						collapsible: true,
+						collapsed: true,
+						collapseMode: 'mini',
+						hideCollapseTool: true,
+						html:[
+							'<div id="moresuggest"> To select the range of years and quarters, use the sliders available along bottom and right edges of the map. ',
+							'Select at least one gear types and one species and the preferred aggregation method. Click the Map button to see results. ',
+							'Subsequent changes to one of the time slider are immediately reflected on the map. ',
+							'Due to the amount of data, it may take some time to obtain the result, please be patient. ',
+							'The animations panel allows creating an animated sequence of maps of catches by year or quarter. <a onclick="toggleMoreSuggest()">Close...</a></div>'].join('')
+					}
+				]
+			},
             {
                xtype: 'tabpanel',
                id: 'tab-panel',
                width: 790, //730,
                height: 500,
                colspan : 2,
-               activeTab: 0,
+               activeTab: 1,
                border: false,  
-               deferredRender: true,
+               //deferredRender: false,
                listeners: {
                   scope: this,
+				  afterrender: function(tabpanel){
+						tabpanel.setActiveTab(0);
+				  },
                   beforetabchange : function(tabPanel, newTab, currentTab){
                       var controlsTab = Ext.getCmp('controls-panel'); 
                       
@@ -641,6 +717,7 @@ Ext.onReady( function() {
                           //
                           // Checking the Gears Type and Species mandatory selections
                           // 
+						  
                           if(this.validateSelection()){
                               var animator = Ext.getCmp('animation-panel');
                               
@@ -650,7 +727,14 @@ Ext.onReady( function() {
 
                               animator.setStartY(y_start);
                               animator.setEndY(y_end);
-
+							  var q_start=Ext.getCmp('quarter-slider').getValues()[0];
+							  var q_end=Ext.getCmp('quarter-slider').getValues()[1];
+							  //Iitialization of the quarter's checkboxes in the animation panel
+							  animator.setQuarters(q_start,q_end);
+							  //Setting allowed operations
+							  //disable non sense options for animations
+							  animator.setAllowedOptions($('#avg').attr("checked"),$('#avgq').attr("checked"));
+									
                               return true;
                           }else{
                               Ext.Msg.show({
@@ -776,13 +860,13 @@ Ext.onReady( function() {
                                   })
                               ],
                               html : [
-                                '<table  class="gfi" border="0" cellpadding="0" cellspacing="0" style="width:650px;">',
+                                '<table class="gfi" border="0" cellpadding="0" cellspacing="0" style="width:770x;">',
 							                  '<tr>',
                                 '<td colspan="4"><b>Select</b></td>',
                                 '<td><b>Aggregation method</b></td>',
 							                  '</tr>',
-                                '<tr>',
-                                '<td style="width:70px; vertical-align:top;"> ',
+                                '<tr style="height:26px;">',
+                                '<td style="width:70px;vertical-align:top;">', 
                                 '<select id="gearType">',
                                 '<option value="-1">Gear Types</option>',
                                 '</select>',
@@ -798,12 +882,13 @@ Ext.onReady( function() {
                                 '<td style="width:20px; vertical-align:top;">',
                                 '<div id="specieslist"></div>',
                                 '</td>',
-                                '<td >',
-				                        '<input type="radio" name="statistics" id="sum" checked="checked" /><label for="sum">Sum across years</label> <br />',
-                                '<input type="radio" name="statistics" id="avg" /><label for="avg">Average across years</label> <br />',
+                                '<td style="vertical-align:top;" rowspan="2" >',
+				                        '<input type="radio" name="statistics" id="sum" checked="checked" /><label for="sum">Cumulative tuna and billfish catches across years</label><br />',
+										'<input type="radio" name="statistics" id="avg" /><label for="avg">Average tuna and billfish catches across years</label> <br />',
+										'<input type="radio" name="statistics" id="avgq" /><label for="avgq">Average tuna and billfish catches across quarters</label> <br />',
 								                '</td>',
 								                '</tr>',
-                                '<tr>',
+                                '<tr style="vertical-align:top;" >',
                                 '<td style="vertical-align:top;">',
                                 '<div id="selectedGearType"></div>',
                                 '</td>',
@@ -820,20 +905,20 @@ Ext.onReady( function() {
                           },
                           {
                               xtype: 'panel',
-                              height: 273,
+                              height: 270, 
                               //width: 730,
                               autoScroll: true,
                               html : [
                                   '<table class="gfi" border="0" cellpadding="0" cellspacing="0">',
                                   '<tr>',
-								                  '<td rowspan="6" style="vertical-align: top; width: 150px;"><b>Legend</b> <br/>Catches (tonnes) <br /><br />',
+								  '<td rowspan="6" style="vertical-align: top; width: 150px;"><b>Legend</b> <br/>Catches <br /><br />',
                                   '<div id="legendTunaAtlas">',
                                   '</div>',
                                   '</td>',
                                   '<td style="vertical-align: top;"><b>Cell info</b><br /><i>Click one cell on the map to get more info</i><br /><br /></td>',
                                   '</tr>',
 								                  '<tr>',
-                                  '<td style="vertical-align: top;"><b><i>Aggregated catches</i></b></td>',
+                                  '<td style="vertical-align: top;"><b><i>Aggregated catches (tonnes)</i></b></td>',
                                   '</tr>',                                 
                                   '<tr>',
                                   '<td>',
@@ -842,7 +927,7 @@ Ext.onReady( function() {
                                   '</tr>',
                                   '<tr>',
                                   '<td>',
-                                  '<b><i>Catches composition</i></b>',
+                                  '<b><i>Catches composition(tonnes)</i></b>',
                                   '</td>',
                                   '</tr>',
                                   '<tr>',
@@ -1050,7 +1135,8 @@ Ext.onReady( function() {
 	
     $('#gearType').change(function () {
         var selection = $('#gearType :selected').text();
-        
+        var iconFS= 'ⓘ➤';
+		var iconClear = ' ✕ ';
         if ($(this).val() >= 0 ) {    
             $('#gearType :selected').attr('disabled','disabled');
             
@@ -1063,10 +1149,10 @@ Ext.onReady( function() {
                 		"<span style='color:#15428B; font-weight:bold; margin-left:5px;' value='" + $(this).val() + "'>" + selection + "</span>" + 
                             "</td>" +
                             "<td width='13'>" +
-                		"<a href='#' onclick='removeMe(this, \"gearType\", \"" + selection + "\");' title='Remove item'>X</a>" + 
+                		"<a class='linknd' href='#' onclick='removeMe(this, \"gearType\", \"" + selection + "\");' title='Remove item'>"+iconClear+"</a>" + 
                 	    "</td>" +
                 	    "<td width='13'>" +
-                		"<a href='http://www.geo-solutions.it' onclick='' title='Info'>I</a>" +
+                		"<a class='linknd' href='http://www.geo-solutions.it' onclick='' title='Info'>"+iconFS+"</a>" +
                 	    "</td>" +
                 	"</tr>" + 
                      "</table>" +
@@ -1076,10 +1162,11 @@ Ext.onReady( function() {
         }
         Ext.getCmp('print-button').disable();
     });
-
+	
     $('#species').change(function () {
         var selection = $('#species :selected').text();
-        
+        var iconFS= 'ⓘ➤';
+		var iconClear = ' ✕ ';
         if ($(this).val() >= 0 ) {
             $('#species :selected').attr('disabled','disabled');
             
@@ -1092,10 +1179,10 @@ Ext.onReady( function() {
                 		"<span style='color:#15428B; font-weight:bold; margin-left:5px;' value='" + $(this).val() + "'>" + selection + "</span>" + 
                             "</td>" +
                             "<td width='13'>" +
-                		"<a href='#' onclick='removeMe(this, \"species\", \"" + selection + "\");' title='Remove item'>X</a>" + 
+                		"<a class='linknd' href='#' onclick='removeMe(this, \"species\", \"" + selection + "\");' title='Remove item'>"+iconClear+"</a>" + 
                 	    "</td>" + 
                 	    "<td width='13'>" +
-                		"<a href='http://www.geo-solutions.it' onclick='' title='Info'>I</a>" +
+                		"<a class='linknd' href='http://www.geo-solutions.it' onclick='' title='Info'>"+iconFS+"</a>" +
                 	    "</td>" +
                 	"</tr>" + 
                      "</table>" +
@@ -1151,10 +1238,16 @@ Ext.onReady( function() {
         for(var q = 0; q <= (qt_end - qt_start ); q++) {
             qt_ta += (qt_start + q) + (q <= (qt_end - qt_start)-1 ? '\\,' : '');
         }
-        
-        var statistic = 'OP:' +  ($('#avg').attr("checked") ? 'avg' : 'sum');
-        
-        var viewparams =  [cd_gear, fic_item, yr_ta, qt_ta, statistic].join(';');
+        //for avg across years sum is the right parameter
+        var statistic = 'OP:' +  ($('#avgq').attr("checked") ? 'avg' : 'sum');
+		/*pass the Year Interval only if it's avg across years is checked
+          otherwise y_interval is an empty string 
+		*/
+		var y_inteval='';
+		if( $('#avg').attr("checked") ){
+			y_inteval = 'Y_INTERV:'+ (yr_end - yr_start);
+        }
+		var viewparams =  [cd_gear, fic_item, yr_ta, qt_ta, statistic,y_inteval].join(';');
         
         return viewparams;
     };
@@ -1218,13 +1311,19 @@ Ext.onReady( function() {
         var yr_ta = '';
           
         for(y = 0; y <= (yr_end - yr_start); y++) {
-          yr_ta += (yr_start + y) + (y <= (yr_end - yr_start)-1 ? ',' : '');
+          yr_ta += (yr_start + y) + (y <= (yr_end - yr_start)-1 ? ', ' : '');
         }
         
         document.getElementById('tabperiod').innerHTML = yr_ta;
         
-        var statistic = ($('#avg').attr("checked") ? 'Average' : 'Cumulative') + " Tuna Yearly Catches";
-        
+		//if sum is selected select Cumulative
+        var statistic = $('#sum').attr("checked") ?'Cumulative Tuna Yearly Catches'  : 'Average Tuna Catches across ';
+        //add 'quarters' or 'years' to the string in the avg case
+		if ( !$('#sum').attr("checked") ){
+			statistic += $('#avg').attr("checked") ? 'Years':'Quarters';	
+		}
+		
+		
         document.getElementById('tabtitle').innerHTML = statistic;
         
         Ext.getCmp('print-button').enable();
@@ -1246,8 +1345,9 @@ Ext.onReady( function() {
             tabpanel.syncSize();
         }
         
-        issueUpdate();		
-    }
+        issueUpdate();	
+
+    }	
 });
 
 function validateMap() {
@@ -1301,4 +1401,11 @@ function removeMe(sender, type, selection) {
     }
     
     Ext.getCmp('print-button').disable();
+}
+function toggleMoreSuggest() {
+	var sg=	Ext.getCmp("moresuggestpan");
+	sg.collapsed?sg.expand(1):sg.collapse(1);
+	var si=Ext.getCmp("suggestintropan");
+	si.collapsed?si.expand(1):si.collapse(1);
+	
 }

@@ -108,11 +108,11 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                         xtype: 'checkboxgroup',
                         id: 'qt-check',
                         columns: 4,
-                        items: [
-                            {boxLabel: '1', name: 'qt-col', inputValue: "1", checked: true},
-                            {boxLabel: '2', name: 'qt-col', inputValue: "2", checked: true},
-                            {boxLabel: '3', name: 'qt-col', inputValue: "3", checked: true},
-                            {boxLabel: '4', name: 'qt-col', inputValue: "4", checked: true}
+                        items: [ 
+                            {id:'checkq1', boxLabel: '1', name: 'qt-col', inputValue: "1", checked: true},
+                            {id:'checkq2', boxLabel: '2', name: 'qt-col', inputValue: "2", checked: true},
+                            {id:'checkq3', boxLabel: '3', name: 'qt-col', inputValue: "3", checked: true},
+                            {id:'checkq4', boxLabel: '4', name: 'qt-col', inputValue: "4", checked: true} 
                         ]
                     }
                 ]
@@ -134,8 +134,8 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                         id: 'span-radio',
                         columns: 1,
                         items: [
-                            {boxLabel: 'Across Years', name: 'span-col', inputValue: "years", checked: true},
-                            {boxLabel: 'Across Quarters', name: 'span-col', inputValue: "quartes"}
+                            {boxLabel: 'Across Years', id:'anim_across_years' , name: 'span-col', inputValue: "years", checked: true},
+                            {boxLabel: 'Across Quarters', id:'anim_across_quarters' , name: 'span-col', inputValue: "quartes"}
                         ]
                     }
                 ]
@@ -144,7 +144,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
             bodyStyle: 'padding-left:5px;',
             items: {
                 xtype: 'fieldset',
-                title: 'ADVANCED OPTIONS',
+                title: 'ADVANCED ANIMATION OPTIONS',
                 collapsible: true,
                 collapsed: true,
                 autoHeight: true,
@@ -176,6 +176,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                 iconCls: 'animation-button',
                 scope: this,
                 handler: function(){ 
+					this.disabled_years=Ext.getCmp('anim_across_years').disabled;
                     var url = this.makeImageURL(false);
                     
                     if(url){                                                    
@@ -213,7 +214,10 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                             listeners: {
                                 scope: this,
                                 close: function(p){
+									
                                     this.enable(true);
+									//need to re-disable animation span type
+									if(this.disabled_years) this.setAllowedOptions(true,false);
                                 }
                             },
                             items: [
@@ -317,7 +321,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
         return this;
     },
     
-    setStartY: function(startYear){
+    setStartY: function(startYear){ 
         this.startY = startYear;
         this.startYear.setValue(this.startY);
     },
@@ -327,6 +331,29 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
         this.endYear.setValue(this.endY); 
     },
     
+	setQuarters: function(q_start, q_end){
+		var do_check=false;
+		var i;
+		for( i=1;i<5;i++){
+			//toggle the do_check flag to enable checking 
+			do_check = (i == q_start) ? true : do_check;
+			Ext.getCmp('qt-check').setValue('checkq'+i,do_check);
+			do_check = (i == q_end) ? false : do_check;
+		}
+	
+	},
+	
+	setAllowedOptions: function(avg,avgq){ 
+		// setting parameters for average across years
+		if(avg){
+			Ext.getCmp('anim_across_years').setDisabled(true).wrap.child('.x-form-cb-label').update("Across Years( useless )");
+			Ext.getCmp('anim_across_quarters').setValue(true);
+		}else{
+			Ext.getCmp('anim_across_years').setDisabled(false).wrap.child('.x-form-cb-label').update("Across Years");
+		}
+		
+	},
+	
     fillAnimationInfo: function(){
         //
         // Filling map information table 
@@ -356,12 +383,17 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
            yrta += i;
            
            if(i < end)
-              yrta += ",";
+              yrta += ", ";
         }     
         
         document.getElementById('tabperiodinfo').innerHTML = yrta;
-
-        var statistic = ($('#avg').attr("checked") ? 'Average' : 'Cumulative') + " Tuna Yearly Catches";
+	
+        //if sum is selected select Cumulative
+        var statistic = $('#sum').attr("checked") ?'Cumulative Tuna Yearly Catches'  : 'Average Tuna Catches across ';
+        //add 'quarters' or 'years' to the string in the avg case
+		if ( !$('#sum').attr("checked") ){
+			statistic += $('#avg').attr("checked") ? 'Years':'Quarters';	
+		}
         
         document.getElementById('tabtitleinfo').innerHTML = statistic;
     },
@@ -390,10 +422,10 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
         
         var yr_ta;
         var qt_ta;
-        
+        var yr_start = this.startYear.getValue();
+        var yr_end = this.endYear.getValue();   
         if(Ext.getCmp('span-radio').getValue().initialConfig.inputValue == 'quartes'){            
-            var yr_start = this.startYear.getValue();
-            var yr_end = this.endYear.getValue();                               
+                                        
             
             yr_ta = 'YR_TA:';
               
@@ -413,14 +445,20 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                   qt_ta += "\\,";
             }
         }
-
-        var statistic = 'OP:' +  ($('#avg').attr("checked") ? 'avg' : 'sum');
-        
+		//for avg across years sum is the right parameter
+        var statistic = 'OP:' +  ($('#avgq').attr("checked") ? 'avg' : 'sum');
         var viewparams;
+		 /*pass the Year Interval only if it's avg across years is checked
+          otherwise y_interval is an empty string 
+		*/
+		var y_inteval='';
+		if( $('#avg').attr("checked") ){
+			y_inteval = 'Y_INTERV:'+ (yr_end - yr_start);
+        }
         if(yr_ta){
-            viewparams =  [cd_gear, fic_item, yr_ta, statistic].join(';');
+            viewparams =  [cd_gear, fic_item, yr_ta, statistic,y_inteval].join(';');
         }else{
-            viewparams =  [cd_gear, fic_item, qt_ta, statistic].join(';');
+            viewparams =  [cd_gear, fic_item, qt_ta, statistic,y_inteval].join(';');
         }
         
         
@@ -447,7 +485,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
         if(Ext.getCmp('span-radio').getValue().initialConfig.inputValue == 'years'){
         
             var quarters = Ext.getCmp('qt-check').getValue();
-            if(this.startYear.isDirty() && this.endYear.isDirty() && quarters.length > 0){
+            if(quarters.length > 0){
                   
                 //
                 // Manage YEARS WMS request
@@ -503,7 +541,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
             // Manage QUARTERS WMS request
             //                           
             var quarters = Ext.getCmp('qt-check').getValue();
-            if(this.startYear.isDirty() && this.endYear.isDirty() && quarters.length > 0){
+            if(quarters.length > 0){
             
                 var start = this.startYear.getValue();
                 var end = this.endYear.getValue();  

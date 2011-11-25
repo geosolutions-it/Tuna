@@ -27,7 +27,12 @@ will be called multiple times if there are various feature collections
     
   <#list feature.attributes as attribute>
     <#if !attribute.isGeometry>
-      <td>${attribute.value}</td>
+		<#if attribute.name=='TS_VALUE'>
+			 <td>${attribute.value?number?string("0.###")}</td> 
+			
+		<#else>
+			<td>${attribute.value}</td>
+		</#if>
     </#if>
   </#list>
   </tr>
