@@ -180,7 +180,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                     var url = this.makeImageURL(false);
                     
                     if(url){                                                    
-                        var isIE9 = Ext.isIE && (/msie 9/.test(navigator.userAgent.toLowerCase())) && document.documentMode != 6;
+                        //var isIE9 = Ext.isIE && (/msie 9/.test(navigator.userAgent.toLowerCase())) && document.documentMode != 6;
                         
                         var width = ((this.imageWidth.isDirty() && this.imageWidth.isValid()) ? this.imageWidth.getValue() : 900);
                         var height;
@@ -198,7 +198,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                         }
                              
                         if(!height)
-                            height = isIE9 ? 511 + 80 : 350;
+                            height = Ext.isIE9 ? 511 + 80 : 350;
                             
                         var animationWin = new Ext.Window({
                             title: 'Animation',
@@ -207,8 +207,8 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                             width: width + 30,
                             height: height,
                             modal: true,
-                            resizable: !isIE9,
-                            draggable: !isIE9,
+                            //resizable: !isIE9,
+                            //draggable: !isIE9,
                             layout: 'border',
                             bodyStyle: 'padding: 5px;',
                             listeners: {
@@ -216,8 +216,8 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                                 close: function(p){
 									
                                     this.enable(true);
-									//need to re-disable animation span type
-									if(this.disabled_years) this.setAllowedOptions(true,false);
+                                    //need to re-disable animation span type
+                                    if(this.disabled_years) this.setAllowedOptions(true,false);
                                 }
                             },
                             items: [
@@ -285,6 +285,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                         this.disable(true);
                         
                         animationWin.show();
+                        
                         this.fillAnimationInfo();
                     }
                 }

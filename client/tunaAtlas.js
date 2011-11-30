@@ -334,11 +334,12 @@ Ext.onReady( function() {
               xtype: 'panel',
               id: 'info-panel',
               header: false,
-              autoScroll: true,
+              //autoScroll: true,
               collapsible: true,
               collapsed: true,
               forceLayout: true,
               width: 790,//730
+              //height: 100,
               colspan : 2,
               border: true,
               listeners: {
@@ -655,46 +656,46 @@ Ext.onReady( function() {
                     })
                 ]
             },
-			{
-				xtype: 'panel',
-				height: 70, 
-				border: false,
-				width: 790,
-				colspan : 2,
-				items:[
-					{
-						xtype: 'panel',
-						id: 'suggestintropan',
-						height: 70,
-						border: false,
-						collapsible: true,
-						collapsed: false,
-						collapseMode: 'mini',
-						hideCollapseTool: true,
-						html: [
-							'<p id="suggestintro">Select tuna and billfish statistics.</p>',
-							'<p id="suggesttext"> Select year and quarter ranges, one more gear types and species and aggregation method. ',
-							'<a onclick="toggleMoreSuggest();">Full istruction...</a></p>'
-						].join('')
-					},
-					{
-						xtype: 'panel',
-						id: 'moresuggestpan',
-						height: 70,
-						border: false,
-						collapsible: true,
-						collapsed: true,
-						collapseMode: 'mini',
-						hideCollapseTool: true,
-						html:[
-							'<div id="moresuggest"> To select the range of years and quarters, use the sliders available along bottom and right edges of the map. ',
-							'Select at least one gear types and one species and the preferred aggregation method. Click the Map button to see results. ',
-							'Subsequent changes to one of the time slider are immediately reflected on the map. ',
-							'Due to the amount of data, it may take some time to obtain the result, please be patient. ',
-							'The animations panel allows creating an animated sequence of maps of catches by year or quarter. <a onclick="toggleMoreSuggest()">Close...</a></div>'].join('')
-					}
-				]
-			},
+            {
+              xtype: 'panel',
+              height: 70, 
+              border: false,
+              width: 790,
+              colspan : 2,
+              items:[
+                {
+                  xtype: 'panel',
+                  id: 'suggestintropan',
+                  height: 70,
+                  border: false,
+                  collapsible: true,
+                  collapsed: false,
+                  collapseMode: 'mini',
+                  hideCollapseTool: true,
+                  html: [
+                    '<p id="suggestintro">Select tuna and billfish statistics.</p>',
+                    '<p id="suggesttext"> Select year and quarter ranges, one more gear types and species and aggregation method. ',
+                    '<a onclick="toggleMoreSuggest();">Full istruction...</a></p>'
+                  ].join('')
+                },
+                {
+                  xtype: 'panel',
+                  id: 'moresuggestpan',
+                  height: 70,
+                  border: false,
+                  collapsible: true,
+                  collapsed: true,
+                  collapseMode: 'mini',
+                  hideCollapseTool: true,
+                  html:[
+                    '<div id="moresuggest"> To select the range of years and quarters, use the sliders available along bottom and right edges of the map. ',
+                    'Select at least one gear types and one species and the preferred aggregation method. Click the Map button to see results. ',
+                    'Subsequent changes to one of the time slider are immediately reflected on the map. ',
+                    'Due to the amount of data, it may take some time to obtain the result, please be patient. ',
+                    'The animations panel allows creating an animated sequence of maps of catches by year or quarter. <a onclick="toggleMoreSuggest()">Close...</a></div>'].join('')
+                }
+              ]
+            },
             {
                xtype: 'tabpanel',
                id: 'tab-panel',
@@ -703,12 +704,11 @@ Ext.onReady( function() {
                colspan : 2,
                activeTab: 1,
                border: false,  
-               //deferredRender: false,
                listeners: {
                   scope: this,
-				  afterrender: function(tabpanel){
-						tabpanel.setActiveTab(0);
-				  },
+                  afterrender: function(tabpanel){
+                    tabpanel.setActiveTab(0);
+                  },
                   beforetabchange : function(tabPanel, newTab, currentTab){
                       var controlsTab = Ext.getCmp('controls-panel'); 
                       
@@ -727,13 +727,16 @@ Ext.onReady( function() {
 
                               animator.setStartY(y_start);
                               animator.setEndY(y_end);
-							  var q_start=Ext.getCmp('quarter-slider').getValues()[0];
-							  var q_end=Ext.getCmp('quarter-slider').getValues()[1];
-							  //Iitialization of the quarter's checkboxes in the animation panel
-							  animator.setQuarters(q_start,q_end);
-							  //Setting allowed operations
-							  //disable non sense options for animations
-							  animator.setAllowedOptions($('#avg').attr("checked"),$('#avgq').attr("checked"));
+                              
+                              var q_start=Ext.getCmp('quarter-slider').getValues()[0];
+                              var q_end=Ext.getCmp('quarter-slider').getValues()[1];
+                              
+                              //Iitialization of the quarter's checkboxes in the animation panel
+                              animator.setQuarters(q_start,q_end);
+                              
+                              //Setting allowed operations
+                              //disable non sense options for animations
+                              animator.setAllowedOptions($('#avg').attr("checked"),$('#avgq').attr("checked"));
 									
                               return true;
                           }else{
@@ -884,8 +887,8 @@ Ext.onReady( function() {
                                 '</td>',
                                 '<td style="vertical-align:top;" rowspan="2" >',
 				                        '<input type="radio" name="statistics" id="sum" checked="checked" /><label for="sum">Cumulative tuna and billfish catches across years</label><br />',
-										'<input type="radio" name="statistics" id="avg" /><label for="avg">Average tuna and billfish catches across years</label> <br />',
-										'<input type="radio" name="statistics" id="avgq" /><label for="avgq">Average tuna and billfish catches across quarters</label> <br />',
+                                '<input type="radio" name="statistics" id="avg" /><label for="avg">Average tuna and billfish catches across years</label> <br />',
+                                '<input type="radio" name="statistics" id="avgq" /><label for="avgq">Average tuna and billfish catches across quarters</label> <br />',
 								                '</td>',
 								                '</tr>',
                                 '<tr style="vertical-align:top;" >',
@@ -911,7 +914,7 @@ Ext.onReady( function() {
                               html : [
                                   '<table class="gfi" border="0" cellpadding="0" cellspacing="0">',
                                   '<tr>',
-								  '<td rowspan="6" style="vertical-align: top; width: 150px;"><b>Legend</b> <br/>Catches <br /><br />',
+                                  '<td rowspan="6" style="vertical-align: top; width: 150px;"><b>Legend</b> <br/>Catches <br /><br />',
                                   '<div id="legendTunaAtlas">',
                                   '</div>',
                                   '</td>',
@@ -960,9 +963,9 @@ Ext.onReady( function() {
         ]
     });
     
-    var isIE9 = Ext.isIE && (/msie 9/.test(navigator.userAgent.toLowerCase())) && document.documentMode != 6;
+    //var isIE9 = Ext.isIE && (/msie 9/.test(navigator.userAgent.toLowerCase())) && document.documentMode != 6;
     
-    if(!isIE9){
+    //if(!isIE9){
         //
         // Setting sliders fields tooltips
         //
@@ -995,7 +998,7 @@ Ext.onReady( function() {
             target: 'quarter-slider',
             html: "Move to define the quarters range"
         });
-    }
+   //}
     
     document.getElementById('specieslist').innerHTML = "<img src=\"images/grid-loading.gif\">";   
     var speciesURL = Tuna.speciesURL;
@@ -1346,6 +1349,7 @@ Ext.onReady( function() {
         }
         
         issueUpdate();	
+        myMap.updateSize();
 
     }	
 });

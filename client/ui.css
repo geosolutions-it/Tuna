@@ -87,11 +87,14 @@
 #bottomBar1 a,
 #bottomBar1 a:visited {
                    color : #fff;
+				   text-decoration: none;
 }
 #bottomBar1 a:hover,
 #bottomBar1 a:active {
                    color : #f90;
-}
+				   font-family: Tahoma;
+				   text-decoration:none;
+}	
 #bottomBar2 {
             border-color : #693;
             border-right : 0 solid #693;
@@ -506,13 +509,14 @@ select{
     padding-right: 0;
 }
 a:hover , #suggesttext a:hover, #moresuggest a:hover{
-	color: #F90;
+	color: #000000;/*#F90;*/
 	cursor: pointer;
 	font-family: "Liberation Sans", Arial, Helvetica, sans-serif;
+	
 }
 #suggesttext a,#suggesttext a:visited , #moresuggest a,#moresuggest a:visited{
-	color: #2D8B8C;
-	text-decoration:none;
+	color: blue;
+	text-decoration: underline;
 	
 }
 
