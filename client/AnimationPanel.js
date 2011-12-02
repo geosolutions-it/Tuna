@@ -146,7 +146,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                 xtype: 'fieldset',
                 title: 'ADVANCED ANIMATION OPTIONS',
                 collapsible: true,
-                collapsed: true,
+                collapsed: false,
                 autoHeight: true,
                 items: [
                     this.frameRate,
@@ -176,7 +176,7 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                 iconCls: 'animation-button',
                 scope: this,
                 handler: function(){ 
-					this.disabled_years=Ext.getCmp('anim_across_years').disabled;
+					          this.disabled_years=Ext.getCmp('anim_across_years').disabled;
                     var url = this.makeImageURL(false);
                     
                     if(url){                                                    
@@ -390,11 +390,12 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
         document.getElementById('tabperiodinfo').innerHTML = yrta;
 	
         //if sum is selected select Cumulative
-        var statistic = $('#sum').attr("checked") ?'Cumulative Tuna Yearly Catches'  : 'Average Tuna Catches across ';
+        var statistic = $('#sum').attr("checked") ?'Cumulative Tuna and Billfish Yearly Catches'  : 'Average Tuna and Billfish Catches across ';
+        
         //add 'quarters' or 'years' to the string in the avg case
-		if ( !$('#sum').attr("checked") ){
-			statistic += $('#avg').attr("checked") ? 'Years':'Quarters';	
-		}
+        if ( !$('#sum').attr("checked") ){
+          statistic += $('#avg').attr("checked") ? 'Years':'Quarters';	
+        }
         
         document.getElementById('tabtitleinfo').innerHTML = statistic;
     },
@@ -446,22 +447,24 @@ AnimationPanel = Ext.extend(Ext.FormPanel, {
                   qt_ta += "\\,";
             }
         }
-		//for avg across years sum is the right parameter
+        
+        //for avg across years sum is the right parameter
         var statistic = 'OP:' +  ($('#avgq').attr("checked") ? 'avg' : 'sum');
         var viewparams;
-		 /*pass the Year Interval only if it's avg across years is checked
-          otherwise y_interval is an empty string 
-		*/
-		var y_inteval='';
-		if( $('#avg').attr("checked") ){
-			y_inteval = 'Y_INTERV:'+ (yr_end - yr_start);
+        
+        /*pass the Year Interval only if it's avg across years is checked
+            otherwise y_interval is an empty string 
+        */
+        var y_inteval='';
+        if( $('#avg').attr("checked") ){
+          y_inteval = 'Y_INTERV:'+ ((yr_end - yr_start) + 1);
         }
+        
         if(yr_ta){
             viewparams =  [cd_gear, fic_item, yr_ta, statistic,y_inteval].join(';');
         }else{
             viewparams =  [cd_gear, fic_item, qt_ta, statistic,y_inteval].join(';');
         }
-        
         
         return viewparams;
     },

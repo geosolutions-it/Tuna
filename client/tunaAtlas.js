@@ -120,22 +120,6 @@ Ext.onReady( function() {
     };
 	
 	  myMap = new OpenLayers.Map('gxmappanel', options);
-	  
-    /*fao_areas = new OpenLayers.Layer.WMS("FAO Fishing Areas", Tuna.vars.gwc,
-        {
-            layers: 'fifao:FISHING_AREAS',
-            format: OpenLayers.Util.alphaHack() ? "image/gif" : "image/jpeg",
-            tiled: 'true',
-            tilesOrigin : "-180.0,-90.0",
-            transparent: true
-        },{
-            singleTile: false,
-            buffer: 0,
-            isBaseLayer: false,
-            wrapDateLine: true,
-            ratio: 1
-        }
-    );*/
 	
 	var fao_areas = new OpenLayers.Layer.WMS("FAO Fishing Areas", Tuna.vars.gwc,
         {
@@ -851,11 +835,11 @@ Ext.onReady( function() {
                                               var layer2 = myMap.layers[2].visibility;
                                               var layer3 = myMap.layers[3].visibility;
                                               
-                                          if(params === undefined){
-                                          	var printBaseURL = href + 'print.html?' + getViewParams() + '&' + myMap.getExtent().left + '&' + myMap.getExtent().bottom + '&' + myMap.getExtent().right + '&' + myMap.getExtent().top + '&' + layer1 + '&' + layer2 + '&' + layer3 ;
-                                          }else{
-                                              var printBaseURL = href + 'print.html?' + getViewParams() + '&' + myMap.getExtent().left + '&' + myMap.getExtent().bottom + '&' + myMap.getExtent().right + '&' + myMap.getExtent().top + '&' + layer1 + '&' + layer2 + '&' + layer3 + '&' + params.BBOX + '&' + params.X + '&' + params.Y + '&' + params.WIDTH + '&' + params.HEIGHT + '&' + brkdwn_params.BBOX + '&' + brkdwn_params.X + '&' + brkdwn_params.Y + '&' + brkdwn_params.WIDTH + '&' + brkdwn_params.HEIGHT  ;
-                                          }
+                                              if(params === undefined){
+                                                var printBaseURL = href + 'print.html?' + getViewParams() + '&' + myMap.getExtent().left + '&' + myMap.getExtent().bottom + '&' + myMap.getExtent().right + '&' + myMap.getExtent().top + '&' + layer1 + '&' + layer2 + '&' + layer3 ;
+                                              }else{
+                                                  var printBaseURL = href + 'print.html?' + getViewParams() + '&' + myMap.getExtent().left + '&' + myMap.getExtent().bottom + '&' + myMap.getExtent().right + '&' + myMap.getExtent().top + '&' + layer1 + '&' + layer2 + '&' + layer3 + '&' + params.BBOX + '&' + params.X + '&' + params.Y + '&' + params.WIDTH + '&' + params.HEIGHT + '&' + brkdwn_params.BBOX + '&' + brkdwn_params.X + '&' + brkdwn_params.Y + '&' + brkdwn_params.WIDTH + '&' + brkdwn_params.HEIGHT  ;
+                                              }
                                               
                                               window.open(printBaseURL);
                                           }
@@ -930,7 +914,7 @@ Ext.onReady( function() {
                                   '</tr>',
                                   '<tr>',
                                   '<td>',
-                                  '<b><i>Catches composition(tonnes)</i></b>',
+                                  '<b><i>Catches composition (tonnes)</i></b>',
                                   '</td>',
                                   '</tr>',
                                   '<tr>',
@@ -1243,14 +1227,16 @@ Ext.onReady( function() {
         }
         //for avg across years sum is the right parameter
         var statistic = 'OP:' +  ($('#avgq').attr("checked") ? 'avg' : 'sum');
-		/*pass the Year Interval only if it's avg across years is checked
-          otherwise y_interval is an empty string 
-		*/
-		var y_inteval='';
-		if( $('#avg').attr("checked") ){
-			y_inteval = 'Y_INTERV:'+ (yr_end - yr_start);
+        
+        /*pass the Year Interval only if it's avg across years is checked
+              otherwise y_interval is an empty string 
+        */
+        var y_inteval='';
+        if( $('#avg').attr("checked") ){
+          y_inteval = 'Y_INTERV:'+ ((yr_end - yr_start) + 1);
         }
-		var viewparams =  [cd_gear, fic_item, yr_ta, qt_ta, statistic,y_inteval].join(';');
+        
+        var viewparams =  [cd_gear, fic_item, yr_ta, qt_ta, statistic,y_inteval].join(';');
         
         return viewparams;
     };
@@ -1319,16 +1305,17 @@ Ext.onReady( function() {
         
         document.getElementById('tabperiod').innerHTML = yr_ta;
         
-		//if sum is selected select Cumulative
-        var statistic = $('#sum').attr("checked") ?'Cumulative Tuna Yearly Catches'  : 'Average Tuna Catches across ';
+		    //if sum is selected select Cumulative
+        var statistic = $('#sum').attr("checked") ?'Cumulative Tuna and Billfish Yearly Catches'  : 'Average Tuna and Billfish Catches across ';
         //add 'quarters' or 'years' to the string in the avg case
-		if ( !$('#sum').attr("checked") ){
-			statistic += $('#avg').attr("checked") ? 'Years':'Quarters';	
-		}
-		
+        
+        if ( !$('#sum').attr("checked") ){
+          statistic += $('#avg').attr("checked") ? 'Years':'Quarters';	
+        }
 		
         document.getElementById('tabtitle').innerHTML = statistic;
         
+        params = undefined;
         Ext.getCmp('print-button').enable();
     }    
 
