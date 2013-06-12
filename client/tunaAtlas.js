@@ -1124,6 +1124,7 @@ Ext.onReady( function() {
         var selection = $('#gearType :selected').text();
         var iconFS= 'ⓘ➤';
 		var iconClear = ' ✕ ';
+		var gears = { "801":234, "802":314, "803":249  };
         if ($(this).val() >= 0 ) {    
             $('#gearType :selected').attr('disabled','disabled');
             
@@ -1139,7 +1140,7 @@ Ext.onReady( function() {
                 		"<a class='linknd' href='#' onclick='removeMe(this, \"gearType\", \"" + selection + "\");' title='Remove item'>"+iconClear+"</a>" + 
                 	    "</td>" +
                 	    "<td width='13'>" +
-                		"<a class='linknd' href='http://www.geo-solutions.it' onclick='' title='Info'>"+iconFS+"</a>" +
+                		((gears[$(this).val()])?"<a class='linknd' href='http://www.fao.org/fishery/geartype/"+gears[$(this).val()]+"/en' onclick='' title='Info'>"+iconFS+"</a>":"") +
                 	    "</td>" +
                 	"</tr>" + 
                      "</table>" +
@@ -1169,7 +1170,7 @@ Ext.onReady( function() {
                 		"<a class='linknd' href='#' onclick='removeMe(this, \"species\", \"" + selection + "\");' title='Remove item'>"+iconClear+"</a>" + 
                 	    "</td>" + 
                 	    "<td width='13'>" +
-                		"<a class='linknd' href='http://www.geo-solutions.it' onclick='' title='Info'>"+iconFS+"</a>" +
+                		"<a class='linknd' href='http://www.fao.org/fishery/species/" + $(this).val() + "/en' onclick='' title='Info'>"+iconFS+"</a>" +
                 	    "</td>" +
                 	"</tr>" + 
                      "</table>" +
